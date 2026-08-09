@@ -174,12 +174,19 @@ REST_AUTH = {
     'JWT_AUTH_HTTPONLY': False,
     'TOKEN_MODEL': None,
 }
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'MedFinder API',
     'DESCRIPTION': 'API documentation for MedFinder portal.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
 }
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    # `allauth` specific authentication methods, such as login by email or social auth
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.1/topics/i18n/
