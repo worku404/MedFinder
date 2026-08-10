@@ -55,6 +55,8 @@ services:
     volumes:
       - ./frontend:/app
       - /app/node_modules  # Don't overwrite container's node_modules
+    env_file:
+      - .env
     depends_on:
       - backend
 
