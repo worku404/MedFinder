@@ -174,7 +174,7 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_UNIQUE_EMAIL = True
 
 # Frontend URL used by allauth for email links, redirects, etc.
-FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:3000')
+FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:5173')
 
 # Google OAuth2 configuration
 GOOGLE_OAUTH_CALLBACK_URL = config(
