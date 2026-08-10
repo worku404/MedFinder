@@ -1,0 +1,41 @@
+{% extends "admin/base_site.html" %}
+{% load i18n l10n admin_urls %}
+
+{% block content %}
+<div id="content-main">
+  <p>You are about to reject the following <strong>{{ pharmacies.count }}</strong> pharmacy registration(s):</p>
+  
+  <ul style="margin: 15px 0; padding-left: 20px;">
+    {% for p in pharmacies %}
+      <li><strong>{{ p.name }}</strong> (Owner: {{ p.owner.email|default:p.owner.username }}, License: {{ p.license_reference }})</li>
+    {% endfor %}
+  </ul>
+
+  <form action="" method="post">
+    {% csrf_token %}
+
+    <!-- Re-emit hidden inputs for each selected pharmacy ID so Django preserves selection -->
+    {% for p in pharmacies %}
+      <input type="hidden" name="{{ action_checkbox_name }}" value="{{ p.pk }}" />
+    {% endfor %}
+
+    <!-- Keep action name so the same view handles POST -->
+    <input type="hidden" name="action" value="reject_pharmacies" />
+
+    <div style="margin: 20px 0;">
+      <label style="display: block; font-weight: bold; margin-bottom: 8px;">
+        {{ form.rejection_reason.label }}:
+      </label>
+      {{ form.rejection_reason }}
+      {% if form.rejection_reason.help_text %}
+        <p style="color: #666; font-size: 12px; margin-top: 4px;">{{ form.rejection_reason.help_text }}</p>
+      {% endif %}
+    </div>
+
+    <div>
+      <input type="submit" name="apply" value="Confirm Rejection" class="default" style="background: #ba2121; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer;" />
+      <a href="{% url 'admin:pharmacies_pharmacy_changelist' %}" class="button cancel-link" style="margin-left: 10px;">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
