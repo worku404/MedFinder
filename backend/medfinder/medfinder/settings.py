@@ -72,9 +72,11 @@ INSTALLED_APPS = [
     'corsheaders',
     'django_filters',
     'drf_spectacular',
+    'django.contrib.gis',
 
     # Local apps
     'accounts',
+    'pharmacies',
 ]
 
 # Required by django-allauth — refers to the django.contrib.sites Site
@@ -170,7 +172,7 @@ ACCOUNT_ADAPTER = 'accounts.adapters.AccountAdapter'
 # Use email as the login identifier; username is not required
 ACCOUNT_LOGIN_METHODS = {'email'}
 ACCOUNT_SIGNUP_FIELDS = ['email*', 'password1*', 'password2*']
-ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_EMAIL_VERIFICATION = 'none'
 ACCOUNT_UNIQUE_EMAIL = True
 
 # Frontend URL used by allauth for email links, redirects, etc.
@@ -178,13 +180,13 @@ FRONTEND_URL = config('FRONTEND_URL', default='http://localhost:5173')
 
 # Google OAuth2 configuration
 GOOGLE_OAUTH_CALLBACK_URL = config(
-    'GOOGLE_OAUTH_CALLBACK_URL', default='http://localhost:5173/auth/google/callback'
+    'VITE_GOOGLE_REDIRECT_URI', default='http://localhost:5173/auth/google/callback'
 )
 
 SOCIALACCOUNT_PROVIDERS = {
     'google': {
         'APP': {
-            'client_id': config('GOOGLE_OAUTH_CLIENT_ID', default=''),
+            'client_id': config('VITE_GOOGLE_CLIENT_ID', default=''),
             'secret': config('GOOGLE_OAUTH_CLIENT_SECRET', default=''),
             'key': '',
         },
@@ -280,8 +282,6 @@ CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",    # Vite React dev server
     "http://127.0.0.1:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
 ]
 
 
