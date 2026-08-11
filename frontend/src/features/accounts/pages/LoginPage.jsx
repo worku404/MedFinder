@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthLayout } from "../components/AuthLayout";
-import { FormField } from "../components/FormField";
-import { StatusBanner } from "../components/StatusBanner";
+import { FormField } from "../../../components/FormField";
+import { StatusBanner } from "../../../components/StatusBanner";
 import { useAuth } from "../../../context/AuthContext";
 import { ApiError } from "../../../lib/apiClient";
 import { startGoogleLogin } from "../googleOAuth";
@@ -11,11 +11,12 @@ export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-  const [form, setForm] = useState({ email: "", password: "" });
+  const [form, setForm] = useState({ email: location.state?.email || "", password: "" });
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
   const from = location.state?.from?.pathname || "/account";
+  const justRegistered = location.state?.justRegistered;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,6 +39,7 @@ export function LoginPage() {
       subtitle="Check live stock across registered pharmacies near you."
       panelNote="Every listing here is confirmed by a real pharmacist, and flagged the moment it goes stale."
     >
+      {justRegistered && !error && <StatusBanner tone="info">Account created — sign in below.</StatusBanner>}
       {error && <StatusBanner tone="error">{error}</StatusBanner>}
       <form onSubmit={handleSubmit} noValidate>
         <FormField

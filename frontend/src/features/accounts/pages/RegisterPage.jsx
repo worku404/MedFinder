@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthLayout } from "../components/AuthLayout";
-import { FormField } from "../components/FormField";
+import { FormField } from "../../../components/FormField";
 import { RoleToggle } from "../components/RoleToggle";
-import { StatusBanner } from "../components/StatusBanner";
+import { StatusBanner } from "../../../components/StatusBanner";
 import { useAuth } from "../../../context/AuthContext";
 import { ApiError } from "../../../lib/apiClient";
 import { startGoogleLogin } from "../googleOAuth";
@@ -27,7 +27,7 @@ export function RegisterPage() {
     setSubmitting(true);
     try {
       await register(form);
-      navigate("/register/check-email", { state: { email: form.email } });
+      navigate("/login", { state: { justRegistered: true, email: form.email } });
     } catch (err) {
       if (err instanceof ApiError && err.data && typeof err.data === "object") {
         setFieldErrors(err.data);

@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { AuthLayout } from "../components/AuthLayout";
-import { FormField } from "../components/FormField";
-import { StatusBanner } from "../components/StatusBanner";
+import { FormField } from "../../../components/FormField";
+import { StatusBanner } from "../../../components/StatusBanner";
 import { accountsApi } from "../api";
 import { ApiError } from "../../../lib/apiClient";
 
