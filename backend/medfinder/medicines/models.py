@@ -17,8 +17,8 @@ class Category(models.Model):
         blank=True,
         help_text="Optional description of this therapeutic class",
     )
-    created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Category"
@@ -46,6 +46,7 @@ class Medicine(models.Model):
         OINTMENT   = "OINTMENT",   "Ointment"
         DROPS      = "DROPS",      "Drops"
         INHALER    = "INHALER",    "Inhaler"
+        OTHER      = "OTHER",      "Other"
 
     name = models.CharField(
         max_length=200,
@@ -66,6 +67,18 @@ class Medicine(models.Model):
     dosage_form = models.CharField(
         max_length=20,
         choices=DosageForm.choices,
+    )
+    image = models.ImageField(
+        upload_to='medicine_images/',
+        blank=True,
+        null=True,
+        help_text="Uploaded packaging image",
+    )
+    image_url = models.URLField(
+        max_length=500,
+        blank=True,
+        null=True,
+        help_text="Optional external image link (e.g. CDN or catalog URL)",
     )
     strength = models.CharField(
         max_length=50,

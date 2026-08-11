@@ -73,10 +73,12 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_spectacular',
     'django.contrib.gis',
+    'sorl.thumbnail',
 
     # Local apps
     'accounts',
     'pharmacies',
+    'medicines', 
 ]
 
 # Required by django-allauth — refers to the django.contrib.sites Site
@@ -331,3 +333,11 @@ CELERY_TIMEZONE = TIME_ZONE
 # ═══════════════════════════════════════════════════════════════════
 
 STATIC_URL = 'static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'
+
+# ═══════════════════════════════════════════════════════════════════
+# MEDIA FILES (User Uploads & Medicine Images)
+# ═══════════════════════════════════════════════════════════════════
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
