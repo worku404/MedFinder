@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AuthLayout } from "../components/AuthLayout";
-import { StatusBanner } from "../components/StatusBanner";
-import { StampMark } from "../components/StampMark";
+import { StatusBanner } from "../../../components/StatusBanner";
+import { StampMark } from "../../../components/StampMark";
 import { accountsApi } from "../api";
 
 export function CheckEmailPage() {

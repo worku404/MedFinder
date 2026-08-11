@@ -1,0 +1,99 @@
+.pharmacy-status {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-sm);
+  font-size: var(--text-sm);
+  font-weight: 600;
+}
+
+.pharmacy-status--pending {
+  background: var(--color-line);
+  color: var(--color-ink-soft);
+}
+
+.pharmacy-status--verified {
+  background: var(--color-verified-bg);
+  color: var(--color-verified);
+}
+
+.pharmacy-status--rejected {
+  background: var(--color-caution-bg);
+  color: var(--color-caution);
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  width: 100%;
+}
+
+.pharmacy-status__body p {
+  margin: var(--space-1) 0 0;
+  font-weight: 400;
+}
+
+.pharmacy-status__action {
+  width: auto;
+  align-self: flex-start;
+}
+
+.pharmacy-card {
+  margin-bottom: var(--space-4);
+}
+
+.pharmacy-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.pharmacy-card__address {
+  color: var(--color-ink-soft);
+  font-size: var(--text-sm);
+  margin: var(--space-2) 0 var(--space-4);
+}
+
+.pharmacy-card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.pharmacy-card__actions .btn {
+  width: auto;
+}
+
+.pharmacy-list__add {
+  width: auto;
+}
+
+.pharmacy-map__hint {
+  font-size: var(--text-xs);
+  color: var(--color-ink-soft);
+  margin: var(--space-2) 0 0;
+}
+
+.pharmacy-form__intro {
+  margin-bottom: var(--space-4);
+  text-align: left;
+}
+
+.share-link__button {
+  width: auto;
+}
+
+.share-link__hint {
+  font-size: var(--text-xs);
+  color: var(--color-ink-soft);
+  margin: var(--space-2) 0 0;
+  word-break: break-all;
+}
+
+.load-more {
+  width: auto;
+  margin-top: var(--space-3);
+}

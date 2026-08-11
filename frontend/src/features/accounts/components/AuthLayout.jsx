@@ -1,4 +1,4 @@
-import { StampMark } from "./StampMark";
+import { StampMark } from "../../../components/StampMark";
 import "./AuthLayout.css";
 
 export function AuthLayout({ eyebrow, title, subtitle, panelNote, children }) {
