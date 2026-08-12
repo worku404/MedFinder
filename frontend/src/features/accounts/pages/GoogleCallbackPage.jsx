@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { AuthLayout } from "../components/AuthLayout";
-import { StatusBanner } from "../components/StatusBanner";
+import { StatusBanner } from "../../../components/StatusBanner";
 import { useAuth } from "../../../context/AuthContext";
 
 export function GoogleCallbackPage() {

@@ -4,7 +4,8 @@
 // GoogleCallbackPage exchanges that code with the backend.
 
 const GOOGLE_CLIENT_ID = import.meta.env.VITE_GOOGLE_CLIENT_ID;
-const REDIRECT_URI = import.meta.env.VITE_GOOGLE_REDIRECT_URI;
+const REDIRECT_URI =
+  import.meta.env.VITE_GOOGLE_REDIRECT_URI || `${window.location.origin}/auth/google/callback`;
 
 export function startGoogleLogin() {
   if (!GOOGLE_CLIENT_ID) {
