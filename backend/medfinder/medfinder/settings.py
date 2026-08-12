@@ -79,6 +79,7 @@ INSTALLED_APPS = [
     'accounts',
     'pharmacies',
     'medicines', 
+    'inventory',
 ]
 
 # Required by django-allauth — refers to the django.contrib.sites Site

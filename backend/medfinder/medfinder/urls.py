@@ -32,6 +32,7 @@ urlpatterns = [
     path('api/auth/register/', include('dj_rest_auth.registration.urls')),
     path('api/pharmacies/', include('pharmacies.urls')),
     path('api/medicines/', include('medicines.urls')),
+    path('api/inventory/', include('inventory.urls')),
     # Spectacular Open API
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
