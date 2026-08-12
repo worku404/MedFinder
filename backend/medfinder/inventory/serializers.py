@@ -4,6 +4,7 @@ from rest_framework import serializers
 from medicines.models import Medicine
 from medicines.serializers import MedicineSerializer
 from pharmacies.models import Pharmacy
+from pharmacies.permissions import is_approved_staff_or_owner
 from .models import Inventory
 
 
@@ -46,10 +47,10 @@ class InventorySerializer(serializers.ModelSerializer):
     def validate_pharmacy(self, value):
         request = self.context.get("request")
         if request and request.user.is_authenticated:
-            # Enforce object ownership (FR-PHM-4)
-            if value.owner != request.user:
+            # Enforce object ownership or approved staff membership (FR-PHM-4)
+            if not is_approved_staff_or_owner(request.user, value):
                 raise serializers.ValidationError(
-                    "You can only manage inventory for pharmacies you own."
+                    "You can only manage inventory for pharmacies you own or are an approved staff member of."
                 )
             # Enforce verification requirement (FR-ACC-4)
             if value.status != Pharmacy.Status.VERIFIED:

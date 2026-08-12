@@ -1,3 +1,4 @@
+from django.db.models import Q
 from django.utils import timezone
 from rest_framework import viewsets
 from rest_framework.decorators import action
@@ -5,6 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from accounts.permissions import IsPharmacist
+from pharmacies.models import PharmacyStaff
 from .models import Inventory
 from .permissions import IsInventoryOwner
 from .serializers import InventorySerializer
@@ -27,10 +29,17 @@ class InventoryViewSet(viewsets.ModelViewSet):
         if getattr(self, "swagger_fake_view", False) or not self.request.user.is_authenticated:
             return Inventory.objects.none()
 
-        # Pharmacists only manage stock for pharmacies they own (FR-INV-1, FR-PHM-4)
+        # Pharmacists manage stock for pharmacies they own or are approved staff for (FR-INV-1, FR-PHM-4)
         return (
-            Inventory.objects.filter(pharmacy__owner=self.request.user)
+            Inventory.objects.filter(
+                Q(pharmacy__owner=self.request.user) |
+                Q(
+                    pharmacy__staff_memberships__pharmacist=self.request.user,
+                    pharmacy__staff_memberships__status=PharmacyStaff.Status.APPROVED,
+                )
+            )
             .select_related("pharmacy", "medicine", "medicine__category")
+            .distinct()
         )
 
     def get_permissions(self):
