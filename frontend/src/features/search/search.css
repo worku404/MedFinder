@@ -1,0 +1,357 @@
+/*
+ * Search page styles.
+ *
+ * The palette/type system this was originally prototyped with (see git
+ * history) is now the app-wide default in styles/tokens.css, so this
+ * file only holds what's actually specific to this page: the hero
+ * copy block, the search bar, and the ranked result list. The page's
+ * own header/nav was removed entirely in favor of the shared
+ * <AppShell> — one nav implementation for the whole app instead of
+ * every feature growing its own.
+ *
+ * Signature element: the freshness-signal dot in ResultRow — a filled,
+ * gently pulsing dot for "confirmed recently," a hollow dashed ring for
+ * "stale" (FR-INV-3 — always shown, never hidden). Deliberately not
+ * another stamp/seal like StampMark elsewhere in the app, since this
+ * page is about *live* data, not a one-time confirmation event.
+ */
+
+.search-shell__hero {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: clamp(32px, 8vw, 72px) clamp(16px, 5vw, 24px) 80px;
+}
+
+.search-shell__eyebrow {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-primary);
+  margin: 0 0 12px;
+}
+
+.search-shell__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 6vw, 2.75rem);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  margin: 0 0 12px;
+}
+
+.search-shell__subtitle {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+  margin: 0 0 32px;
+  max-width: 46ch;
+}
+
+/* ── Search bar ─────────────────────────────────────────────────── */
+/* Deliberately the most visually "loud" element on the page — pill
+   radius, raised surface — since it's the single control everything
+   else depends on. Result rows below use a much smaller radius on
+   purpose, so the hierarchy is unmistakable rather than uniform. */
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-line);
+  border-radius: 999px;
+  padding: 6px 8px 6px 20px;
+  box-shadow: var(--shadow-card);
+  transition: border-color 140ms ease;
+}
+
+.search-bar:focus-within {
+  border-color: var(--color-primary);
+}
+
+.search-bar__icon {
+  flex-shrink: 0;
+  color: var(--color-ink-soft);
+}
+
+.search-bar__input {
+  flex: 1;
+  border: none;
+  outline: none;
+  background: transparent;
+  font-family: var(--font-body);
+  font-size: 1rem;
+  color: var(--color-ink);
+  padding: 10px 0;
+  min-width: 0;
+}
+
+.search-bar__input::placeholder {
+  color: var(--color-ink-soft);
+}
+
+.search-bar__submit {
+  flex-shrink: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-primary);
+  color: #fff;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 0.9rem;
+  padding: 12px 22px;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.search-bar__submit:hover:not(:disabled) {
+  background: var(--color-primary-hover);
+}
+
+.search-bar__submit:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .search-bar {
+    flex-wrap: wrap;
+    border-radius: 20px;
+    padding: 12px 16px;
+  }
+  .search-bar__submit {
+    width: 100%;
+  }
+}
+
+/* ── Location banner ────────────────────────────────────────────── */
+
+.location-banner,
+.location-banner--muted {
+  margin: 16px 0 8px;
+  font-size: 0.875rem;
+  color: var(--color-ink-soft);
+}
+
+.location-banner--muted {
+  font-size: 0.8125rem;
+}
+
+.location-banner__action {
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--color-primary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+.location-banner__action:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ── Results ────────────────────────────────────────────────────── */
+
+.search-results {
+  margin-top: 32px;
+}
+
+.search-results__hint {
+  color: var(--color-ink-soft);
+  font-size: 0.9375rem;
+  padding: 24px 0;
+}
+
+.search-results__error {
+  padding: 20px;
+  border-radius: 8px;
+  background: var(--color-caution-bg);
+  color: var(--color-caution);
+}
+
+.search-results__error .search-bar__submit {
+  margin-top: 12px;
+  background: var(--color-caution);
+}
+
+.search-results__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.search-results__load-more {
+  display: block;
+  margin: 20px auto 0;
+  background: transparent;
+  border: 1.5px solid var(--color-line);
+  color: var(--color-ink);
+}
+
+.search-results__load-more:hover:not(:disabled) {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+}
+
+/* ── Result row ─────────────────────────────────────────────────── */
+/* Small, sharp radius on purpose — reads as a dense data list, not a
+   card grid, in deliberate contrast to the pill-shaped search bar. */
+
+.result-row {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 4px;
+  padding: 16px 18px;
+}
+
+.result-row--out-of-stock {
+  opacity: 0.72;
+}
+
+.result-row__signal {
+  flex-shrink: 0;
+  padding-top: 4px;
+}
+
+.result-row__body {
+  flex: 1;
+  min-width: 0;
+}
+
+.result-row__headline {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.result-row__medicine {
+  font-family: var(--font-display);
+  font-size: 1.0625rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.result-row__medicine a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.result-row__medicine a:hover {
+  text-decoration: underline;
+}
+
+.result-row__strength {
+  font-weight: 400;
+  color: var(--color-ink-soft);
+  font-size: 0.9rem;
+}
+
+.result-row__availability {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-verified);
+}
+
+.result-row__availability--out {
+  color: var(--color-caution);
+}
+
+.result-row__pharmacy {
+  margin: 4px 0 0;
+  font-weight: 500;
+}
+
+.result-row__pharmacy a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.result-row__pharmacy a:hover {
+  color: var(--color-primary);
+}
+
+.result-row__address {
+  margin: 2px 0 10px;
+  color: var(--color-ink-soft);
+  font-size: 0.875rem;
+}
+
+.result-row__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 14px;
+  align-items: baseline;
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.result-row__price {
+  font-weight: 600;
+}
+
+.result-row__distance {
+  color: var(--color-ink-soft);
+}
+
+.result-row__freshness {
+  color: var(--color-verified);
+}
+
+.result-row__freshness--stale {
+  color: var(--color-stale);
+}
+
+/* ── Freshness signal (signature element) ──────────────────────── */
+
+.freshness-signal {
+  position: relative;
+  display: inline-flex;
+  width: 10px;
+  height: 10px;
+}
+
+.freshness-signal__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.freshness-signal--fresh .freshness-signal__dot {
+  background: var(--color-verified);
+}
+
+.freshness-signal--stale .freshness-signal__dot {
+  background: transparent;
+  border: 1.5px dashed var(--color-stale);
+}
+
+.freshness-signal__pulse {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--color-verified);
+  animation: freshness-pulse 2.4s ease-out infinite;
+}
+
+@keyframes freshness-pulse {
+  0% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}

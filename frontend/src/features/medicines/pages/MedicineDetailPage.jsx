@@ -64,6 +64,9 @@ export function MedicineDetailPage() {
           </p>
           <MedicineTag requiresPrescription={medicine.requires_prescription} />
           {medicine.description && <p className="medicine-detail__description">{medicine.description}</p>}
+          <Link className="btn btn--primary medicine-detail__search-link" to={`/search?q=${encodeURIComponent(medicine.name)}`}>
+            Check availability near me
+          </Link>
         </div>
       </div>
     </div>
