@@ -1,7 +1,9 @@
+import uuid
 from django.conf import settings
 from django.contrib.gis.db import models as gis_models
-from django.db import models
 from django.core.exceptions import ValidationError
+from django.db import models
+from django.utils import timezone
 
 
 
@@ -50,3 +52,45 @@ class Pharmacy(models.Model):
             })
     def __str__(self):
         return f"{self.name} ({self.status})"
+
+class PharmacyStaff(models.Model):
+    class Status(models.TextChoices):
+        PENDING = "pending", "Pending Owner Approval"
+        APPROVED = "approved", "Approved"
+        REJECTED = "rejected", "Rejected"
+
+    pharmacy = models.ForeignKey(
+        Pharmacy, related_name="staff_memberships", on_delete=models.CASCADE
+    )
+    pharmacist = models.ForeignKey(
+        settings.AUTH_USER_MODEL, related_name="pharmacy_memberships", on_delete=models.CASCADE
+    )
+    status = models.CharField(max_length=20, choices=Status.choices, default=Status.PENDING)
+    reviewed_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=["pharmacy", "pharmacist"], name="unique_pharmacy_staff")
+        ]
+
+    def __str__(self):
+        return f"{self.pharmacist.email} @ {self.pharmacy.name} ({self.status})"
+
+class PharmacyInvite(models.Model):
+    pharmacy = models.ForeignKey(
+        Pharmacy, related_name="invites", on_delete=models.CASCADE
+    )
+    code = models.CharField(max_length=32, unique=True)
+    created_by = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    expires_at = models.DateTimeField()
+    max_uses = models.PositiveIntegerField(default=1)
+    use_count = models.PositiveIntegerField(default=0)
+    revoked = models.BooleanField(default=False)
+    created = models.DateTimeField(auto_now_add=True)
+
+    def is_valid(self):
+        return not self.revoked and self.use_count < self.max_uses and timezone.now() < self.expires_at
