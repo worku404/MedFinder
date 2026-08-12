@@ -38,13 +38,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 ROOT_URLCONF = 'medfinder.urls'
 
 WSGI_APPLICATION = 'medfinder.wsgi.application'
+ASGI_APPLICATION = "medfinder.asgi.application"
 
+# channel layer
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.pubsub.RedisPubSubChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],   # use the docker service name, not 127.0.0.1
+        },
+    },
+}
 
 # ═══════════════════════════════════════════════════════════════════
 # APPLICATION DEFINITION
 # ═══════════════════════════════════════════════════════════════════
 
 INSTALLED_APPS = [
+    "daphne",  
     # Django built-in apps
     'django.contrib.admin',
     'django.contrib.auth',
@@ -73,13 +84,16 @@ INSTALLED_APPS = [
     'django_filters',
     'drf_spectacular',
     'django.contrib.gis',
+    'django.contrib.postgres',
     'sorl.thumbnail',
 
     # Local apps
     'accounts',
     'pharmacies',
-    'medicines', 
+    'medicines',
     'inventory',
+    'search',
+    "notifications",
 ]
 
 # Required by django-allauth — refers to the django.contrib.sites Site
