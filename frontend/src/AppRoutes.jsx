@@ -17,6 +17,7 @@ import { PharmacyEditPage } from "./features/pharmacies/pages/PharmacyEditPage";
 import { PublicPharmacyPage } from "./features/pharmacies/pages/PublicPharmacyPage";
 import { JoinPharmacyPage } from "./features/pharmacies/pages/JoinPharmacyPage";
 import { PharmacyStaffPage } from "./features/pharmacies/pages/PharmacyStaffPage";
+import { PharmacistInboxPage } from "./features/chat/pages/PharmacistInboxPage";
 
 import { CategoryListPage } from "./features/medicines/pages/CategoryListPage";
 import { CategoryDetailPage } from "./features/medicines/pages/CategoryDetailPage";
@@ -86,6 +87,14 @@ export function AppRoutes() {
         element={
           <ProtectedRoute>
             <MyPharmaciesPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/pharmacies/mine/inbox"
+        element={
+          <ProtectedRoute>
+            <PharmacistInboxPage />
           </ProtectedRoute>
         }
       />

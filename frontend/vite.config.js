@@ -12,9 +12,14 @@ export default defineConfig({
       '/api': {
         target: 'http://backend:8000',
         changeOrigin: true,
-        // WebSocket proxy (for assistant status + notifications)
+      },
+      // WebSocket proxy (for chat and real-time notifications)
+      '/ws': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
         ws: true,
       },
     },
   },
 });
+

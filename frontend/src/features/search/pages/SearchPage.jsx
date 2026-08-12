@@ -1,5 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
+import { chatApi } from "../../chat/api";
+import { ChatModal } from "../../chat/components/ChatModal";
 import { searchApi } from "../api";
 import { useGeolocation } from "../useGeolocation";
 import { SearchBar } from "../components/SearchBar";
@@ -15,6 +18,8 @@ import { ResultRow } from "../components/ResultRow";
 // straight into a search (e.g. MedicineDetailPage's "Check availability"
 // link) instead of only being reachable by typing into the bar by hand.
 export function SearchPage() {
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const geolocation = useGeolocation();
 
@@ -25,6 +30,24 @@ export function SearchPage() {
   // "idle" (nothing searched yet) | "loading" | "ready" | "error"
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
+
+  // Chat modal state
+  const [activeConversation, setActiveConversation] = useState(null);
+  const [chatPharmacyName, setChatPharmacyName] = useState("");
+
+  const handleStartChat = async (pharmacy) => {
+    if (!user) {
+      navigate(`/login?next=${encodeURIComponent(window.location.pathname + window.location.search)}`);
+      return;
+    }
+    try {
+      const conv = await chatApi.startConversation(pharmacy.id);
+      setChatPharmacyName(pharmacy.name);
+      setActiveConversation(conv);
+    } catch (err) {
+      setError(err.message || "Could not start chat with this pharmacy.");
+    }
+  };
 
   // Guards against a slow earlier request overwriting a faster later
   // one — e.g. typing "para", then "paracetamol" quickly after: if the
@@ -122,7 +145,7 @@ export function SearchPage() {
             <ul className="search-results__list">
               {results.map((result) => (
                 <li key={result.id}>
-                  <ResultRow result={result} />
+                  <ResultRow result={result} onChatClick={handleStartChat} />
                 </li>
               ))}
             </ul>
@@ -139,6 +162,14 @@ export function SearchPage() {
           </>
         )}
       </section>
+
+      {activeConversation && (
+        <ChatModal
+          conversationId={activeConversation.id}
+          pharmacyName={chatPharmacyName}
+          onClose={() => setActiveConversation(null)}
+        />
+      )}
     </main>
   );
 }

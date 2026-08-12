@@ -1,20 +1,50 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import { ChatModal } from "../features/chat/components/ChatModal";
+import { useNotificationSocket } from "../features/notifications/useNotificationSocket";
+import { NotificationToast } from "./NotificationToast";
 import { ThemeToggle } from "./ThemeToggle";
 import "./AppShell.css";
 
-// The one persistent shell every route renders inside of (see
-// AppRoutes.jsx) — this is what makes the app feel like a single
-// connected site instead of a pile of pages only reachable by typing a
-// URL. Nav content is role-aware: an anonymous visitor sees "Sign in";
-// a signed-in pharmacist additionally sees "My pharmacies" (the entry
-// point into managing their stock); everyone always sees Search and
-// Medicines, since both are public.
 export function AppShell() {
   const { status, user, logout } = useAuth();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [toasts, setToasts] = useState([]);
+  const [activeChat, setActiveChat] = useState(null);
+
+  const handleNotification = useCallback((notification) => {
+    setToasts((prev) => [
+      ...prev,
+      {
+        id: Date.now() + Math.random(),
+        title: notification.title,
+        body: notification.body,
+        target_url: notification.target_url,
+      },
+    ]);
+  }, []);
+
+  useNotificationSocket(status, handleNotification);
+
+  const handleDismissToast = (id) => {
+    setToasts((prev) => prev.filter((t) => t.id !== id));
+  };
+
+  const handleToastAction = (toast) => {
+    handleDismissToast(toast.id);
+    if (user?.role === "pharmacist") {
+      navigate("/pharmacies/mine/inbox");
+    } else if (toast.target_url) {
+      const match = toast.target_url.match(/\/conversations\/(\d+)/);
+      if (match) {
+        const conversationId = Number(match[1]);
+        const pharmacyName = toast.title.replace(/^New message from\s*/i, "") || "Pharmacy Chat";
+        setActiveChat({ conversationId, pharmacyName });
+      }
+    }
+  };
 
   const handleLogout = async () => {
     setMenuOpen(false);
@@ -87,6 +117,22 @@ export function AppShell() {
           </nav>
         </div>
       </header>
+
+      {/* Global Real-Time Toast Notifications */}
+      <NotificationToast
+        toasts={toasts}
+        onDismiss={handleDismissToast}
+        onAction={handleToastAction}
+      />
+
+      {/* Global Patient Chat Modal on Toast Action */}
+      {activeChat && (
+        <ChatModal
+          conversationId={activeChat.conversationId}
+          pharmacyName={activeChat.pharmacyName}
+          onClose={() => setActiveChat(null)}
+        />
+      )}
 
       <Outlet />
     </div>

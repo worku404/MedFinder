@@ -14,7 +14,7 @@ function freshnessLabel(result) {
 // the point, so the layout should read as "a scannable readout," not a
 // grid of interchangeable tiles. Price/distance use the monospace face
 // (shared with the rest of the app) since they're data, not prose.
-export function ResultRow({ result }) {
+export function ResultRow({ result, onChatClick }) {
   const outOfStock = result.quantity_available === 0;
 
   return (
@@ -36,9 +36,21 @@ export function ResultRow({ result }) {
           </span>
         </div>
 
-        <p className="result-row__pharmacy">
-          <Link to={`/pharmacies/${result.pharmacy.id}`}>{result.pharmacy.name}</Link>
-        </p>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
+          <p className="result-row__pharmacy" style={{ margin: 0 }}>
+            <Link to={`/pharmacies/${result.pharmacy.id}`}>{result.pharmacy.name}</Link>
+          </p>
+          {onChatClick && (
+            <button
+              type="button"
+              className="btn btn--google"
+              style={{ width: "auto", padding: "0.25rem 0.65rem", fontSize: "0.8rem" }}
+              onClick={() => onChatClick(result.pharmacy)}
+            >
+              Chat with Pharmacist
+            </button>
+          )}
+        </div>
         <p className="result-row__address">{result.pharmacy.address || "Address not on file"}</p>
 
         <p className="result-row__meta">
@@ -54,3 +66,4 @@ export function ResultRow({ result }) {
     </article>
   );
 }
+

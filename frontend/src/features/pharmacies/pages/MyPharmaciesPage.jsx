@@ -47,6 +47,9 @@ export function MyPharmaciesPage() {
           <h1 className="settings-header__title">Your pharmacies</h1>
         </div>
         <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap" }}>
+          <Link className="btn btn--google pharmacy-list__add" to="/pharmacies/mine/inbox">
+            Patient inquiries
+          </Link>
           <Link className="btn btn--google pharmacy-list__add" to="/pharmacies/join">
             Join with invite code
           </Link>

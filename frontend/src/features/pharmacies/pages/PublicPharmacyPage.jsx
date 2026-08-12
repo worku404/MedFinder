@@ -1,12 +1,20 @@
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../../../context/AuthContext";
+import { StatusBanner } from "../../../components/StatusBanner";
+import { chatApi } from "../../chat/api";
+import { ChatModal } from "../../chat/components/ChatModal";
 import { pharmaciesApi } from "../api";
 import { PharmacyMap } from "../components/PharmacyMap";
-import { StatusBanner } from "../../../components/StatusBanner";
 
 export function PublicPharmacyPage() {
   const { id } = useParams();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const [state, setState] = useState({ status: "loading", pharmacy: null, error: null });
+  const [activeConversation, setActiveConversation] = useState(null);
+  const [startingChat, setStartingChat] = useState(false);
+  const [chatError, setChatError] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -22,6 +30,23 @@ export function PublicPharmacyPage() {
       cancelled = true;
     };
   }, [id]);
+
+  const handleStartChat = async () => {
+    if (!user) {
+      navigate(`/login?next=/pharmacies/${id}`);
+      return;
+    }
+    setStartingChat(true);
+    setChatError(null);
+    try {
+      const conv = await chatApi.startConversation(id);
+      setActiveConversation(conv);
+    } catch (err) {
+      setChatError(err.message || "Could not start chat with this pharmacy.");
+    } finally {
+      setStartingChat(false);
+    }
+  };
 
   if (state.status === "loading") return <p className="auth-fineprint">Loading pharmacy…</p>;
   if (state.status === "error") {
@@ -41,12 +66,33 @@ export function PublicPharmacyPage() {
           <p className="settings-header__eyebrow">Pharmacy</p>
           <h1 className="settings-header__title">{pharmacy.name}</h1>
         </div>
+        <button
+          type="button"
+          className="btn btn--primary"
+          style={{ width: "auto" }}
+          onClick={handleStartChat}
+          disabled={startingChat}
+        >
+          {startingChat ? "Opening chat…" : "Chat with Pharmacist"}
+        </button>
       </header>
+
+      {chatError && <StatusBanner tone="error">{chatError}</StatusBanner>}
+
       <section className="settings-card">
         <p>{pharmacy.address}</p>
         {pharmacy.phone_number && <p className="auth-fineprint">{pharmacy.phone_number}</p>}
         <PharmacyMap latitude={pharmacy.latitude} longitude={pharmacy.longitude} readOnly />
       </section>
+
+      {activeConversation && (
+        <ChatModal
+          conversationId={activeConversation.id}
+          pharmacyName={pharmacy.name}
+          onClose={() => setActiveConversation(null)}
+        />
+      )}
     </div>
   );
 }
+
