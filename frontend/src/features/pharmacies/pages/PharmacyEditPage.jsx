@@ -45,24 +45,53 @@ export function PharmacyEditPage() {
     <div className="settings-page">
       <header className="settings-header">
         <div>
-          <p className="settings-header__eyebrow">Pharmacist</p>
+          <p className="settings-header__eyebrow">
+            {pharmacy.is_owner ? "Store Owner" : "Staff Pharmacist"}
+          </p>
           <h1 className="settings-header__title">{pharmacy.name}</h1>
         </div>
       </header>
+
       <section className="settings-card">
         <PharmacyStatusBanner status={pharmacy.status} rejectionReason={pharmacy.rejection_reason} />
-        <PharmacyForm
-          initialValues={{
-            name: pharmacy.name,
-            address: pharmacy.address,
-            license_reference: pharmacy.license_reference,
-            phone_number: pharmacy.phone_number,
-            latitude: pharmacy.latitude,
-            longitude: pharmacy.longitude,
-          }}
-          submitLabel={pharmacy.status === "rejected" ? "Resubmit for review" : "Save changes"}
-          onSubmit={handleSubmit}
-        />
+
+        {pharmacy.is_owner ? (
+          <PharmacyForm
+            initialValues={{
+              name: pharmacy.name,
+              address: pharmacy.address,
+              license_reference: pharmacy.license_reference,
+              phone_number: pharmacy.phone_number,
+              latitude: pharmacy.latitude,
+              longitude: pharmacy.longitude,
+            }}
+            submitLabel={pharmacy.status === "rejected" ? "Resubmit for review" : "Save changes"}
+            onSubmit={handleSubmit}
+          />
+        ) : (
+          <div style={{ marginTop: "1.5rem" }}>
+            <p className="auth-fineprint">
+              You are assigned to this pharmacy as a staff pharmacist. Physical store details and
+              licenses can only be updated by the store owner.
+            </p>
+            <div style={{ marginTop: "1rem", display: "flex", gap: "0.75rem" }}>
+              <button
+                type="button"
+                className="btn btn--primary"
+                onClick={() => navigate(`/pharmacies/mine/${pharmacy.id}/inventory`)}
+              >
+                Go to Stock Management
+              </button>
+              <button
+                type="button"
+                className="btn btn--google"
+                onClick={() => navigate("/pharmacies/mine")}
+              >
+                Back to pharmacies
+              </button>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );

@@ -1,25 +1,11 @@
 import { apiFetch } from "../../lib/apiClient";
+import { buildQuery, cursorFromUrl } from "../../lib/pagination";
 
-function buildQuery({ cursor, ordering, search } = {}) {
-  const params = new URLSearchParams();
-  if (cursor) params.set("cursor", cursor);
-  if (ordering) params.set("ordering", ordering);
-  if (search) params.set("search", search);
-  const qs = params.toString();
-  return qs ? `?${qs}` : "";
-}
-
-// DRF's CursorPagination returns full next/previous URLs, not raw cursor
-// values — this pulls the cursor param back out so it can be passed into
-// the next list() call.
-export function cursorFromUrl(url) {
-  if (!url) return null;
-  try {
-    return new URL(url).searchParams.get("cursor");
-  } catch {
-    return null;
-  }
-}
+// Re-exported so existing imports of `cursorFromUrl` from this module
+// (e.g. MyPharmaciesPage) keep working — the implementation itself now
+// lives in one place (lib/pagination.js) instead of being duplicated
+// per feature.
+export { cursorFromUrl };
 
 export const pharmaciesApi = {
   // Public — no auth required, matches security: [] on these two paths.
@@ -35,4 +21,31 @@ export const pharmaciesApi = {
   minePartialUpdate: (id, payload) =>
     apiFetch(`/api/pharmacies/mine/${id}/`, { method: "PATCH", body: payload }),
   mineDestroy: (id) => apiFetch(`/api/pharmacies/mine/${id}/`, { method: "DELETE" }),
+
+  // Join a pharmacy via invite code (staff pharmacist membership)
+  join: (inviteCode) =>
+    apiFetch("/api/pharmacies/join/", {
+      method: "POST",
+      body: { invite_code: inviteCode },
+    }),
+
+  // Staff & Invite management (Owner-only)
+  listStaff: (pharmacyId) => apiFetch(`/api/pharmacies/mine/${pharmacyId}/staff/`),
+  approveStaff: (pharmacyId, staffId) =>
+    apiFetch(`/api/pharmacies/mine/${pharmacyId}/approve_staff/`, {
+      method: "POST",
+      body: { staff_id: staffId },
+    }),
+  rejectStaff: (pharmacyId, staffId) =>
+    apiFetch(`/api/pharmacies/mine/${pharmacyId}/reject_staff/`, {
+      method: "POST",
+      body: { staff_id: staffId },
+    }),
+  listInvites: (pharmacyId) => apiFetch(`/api/pharmacies/mine/${pharmacyId}/invites/`),
+  createInvite: (pharmacyId, payload = {}) =>
+    apiFetch(`/api/pharmacies/mine/${pharmacyId}/invites/`, {
+      method: "POST",
+      body: payload,
+    }),
 };
+
