@@ -1,0 +1,137 @@
+.app-shell__header {
+  border-bottom: 1px solid var(--color-line);
+  background: var(--color-surface);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.app-shell__row {
+  max-width: 1040px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px clamp(16px, 5vw, 32px);
+  gap: 16px;
+}
+
+.app-shell__brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  color: var(--color-ink);
+  text-decoration: none;
+  flex-shrink: 0;
+}
+
+.app-shell__brand-mark {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  box-shadow: 0 0 0 3px var(--color-primary-soft);
+}
+
+.app-shell__menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid var(--color-line);
+  background: transparent;
+  color: var(--color-ink);
+  cursor: pointer;
+}
+
+.app-shell__nav {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.app-shell__nav-divider {
+  width: 1px;
+  height: 20px;
+  background: var(--color-line);
+}
+
+.app-shell__link {
+  font-family: var(--font-body);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-ink-soft);
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.app-shell__link.active,
+.app-shell__link:hover {
+  color: var(--color-ink);
+}
+
+.app-shell__link.active {
+  border-bottom-color: var(--color-primary);
+}
+
+.app-shell__link--button {
+  background: none;
+  border: none;
+  border-bottom: 1px solid transparent;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+}
+
+.app-shell__link--button:hover {
+  color: var(--color-caution);
+}
+
+/* Below this width, the nav collapses into a toggleable panel — the
+   header row keeps just the brand + a hamburger button, matching the
+   mobile-first priority called out elsewhere in the app (NFR-USE-1). */
+@media (max-width: 720px) {
+  .app-shell__menu-toggle {
+    display: flex;
+  }
+
+  .app-shell__nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    background: var(--color-surface);
+    border-bottom: 1px solid var(--color-line);
+    padding: 12px clamp(16px, 5vw, 32px) 18px;
+  }
+
+  .app-shell__nav--open {
+    display: flex;
+  }
+
+  .app-shell__nav-divider {
+    width: 100%;
+    height: 1px;
+    margin: 6px 0;
+  }
+
+  .app-shell__link {
+    padding: 8px 0;
+    width: 100%;
+  }
+
+  .app-shell__row {
+    position: relative;
+  }
+}

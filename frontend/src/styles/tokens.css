@@ -1,36 +1,59 @@
 /*
- * MedFinder design tokens.
+ * MedFinder design tokens — single source of truth for color/type/space.
  * Import this once, near the top of main.jsx / App.jsx.
  *
+ * This palette was originally prototyped only for the `search` feature
+ * (see the design-plan comment that used to live in search.css) as a
+ * deliberate alternative to the app's original warm cream/serif/amber
+ * look. It read better and was promoted here to be the *one* palette
+ * for the whole app — every feature now pulls from these tokens instead
+ * of defining its own, so changing the brand means editing this file
+ * only, not hunting through every feature's CSS.
+ *
  * Palette reasoning (not decorative — each color has a job):
- *   ink       — primary text. Deep bottle-green-black instead of pure
+ *   ink       — primary text. Cool, near-black teal-tinted, not pure
  *               black; softer on the eye, still high contrast.
- *   paper     — page background. Warm off-white, like prescription
- *               paper, not a stark clinical white.
- *   amber     — primary action color. Medicine-bottle amber glass.
- *               This is the ONE color used for buttons/links — no
- *               gradient, no second "accent" competing with it.
+ *   paper     — page background. Cool, clinical off-white — a "live
+ *               readout" feel rather than warm vintage paper.
+ *   primary   — the ONE action/brand color (buttons, links, focus
+ *               ring, the live-signal motif). Teal, chosen because it
+ *               reads as "signal / live / found" — tied to the
+ *               product's actual freshness mechanic, not picked
+ *               because it "tests well."
  *   verified  — success / confirmed-state color. Tied directly to the
- *               product's actual trust mechanic (pharmacy verification,
- *               stock freshness), not a generic green.
- *   caution   — errors / rejected state.
+ *               product's trust mechanic (pharmacy verification, fresh
+ *               stock), not a generic green.
+ *   stale     — aging/unconfirmed stock (FR-INV-3). Deliberately not
+ *               the same color as `caution` — staleness is aging
+ *               information, not a hard error.
+ *   caution   — errors / rejected / out-of-stock state.
  */
 :root {
-  --color-ink: #16231f;
-  --color-ink-soft: #4b5a53;
-  --color-paper: #faf7f1;
+  --color-ink: #0e1b1a;
+  --color-ink-soft: #4d6360;
+  --color-paper: #f3f7f6;
   --color-surface: #ffffff;
-  --color-line: #e4ddd0;
-  --color-amber: #c1791d;
-  --color-amber-hover: #a3650e;
-  --color-verified: #2f6844;
-  --color-verified-bg: #eaf2ec;
-  --color-caution: #b14a3b;
-  --color-caution-bg: #fbede9;
-  --color-focus: #7a9b8e;
+  --color-line: #d7e1df;
 
-  --font-display: "Fraunces", "Iowan Old Style", Georgia, serif;
-  --font-body: "Public Sans", "Segoe UI", system-ui, sans-serif;
+  --color-primary: #0e8a82;
+  --color-primary-hover: #0b6e68;
+  --color-primary-soft: rgba(14, 138, 130, 0.1);
+
+  --color-verified: #2f7d4f;
+  --color-verified-bg: #e7f3ec;
+  --color-stale: #a9793c;
+  --color-stale-bg: #f7efe1;
+  --color-caution: #b3503f;
+  --color-caution-bg: #fbeae7;
+
+  /* Derives from --color-primary rather than hardcoding a second hue —
+     one brand color doing double duty as the focus ring, so there's no
+     separate "focus color" decision to keep in sync when the brand
+     color changes. */
+  --color-focus: var(--color-primary);
+
+  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, monospace;
 
   --text-2xl: 2rem;
@@ -53,19 +76,36 @@
   --radius-md: 10px;
   --radius-full: 999px;
 
-  --shadow-card: 0 1px 2px rgba(22, 35, 31, 0.06), 0 8px 24px rgba(22, 35, 31, 0.06);
+  --shadow-card: 0 1px 2px rgba(14, 27, 26, 0.06), 0 8px 24px rgba(14, 27, 26, 0.06);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-ink: #f2efe9;
-    --color-ink-soft: #b7c2bc;
-    --color-paper: #101613;
-    --color-surface: #171f1b;
-    --color-line: #2a332d;
-    --color-verified-bg: #142a1e;
-    --color-caution-bg: #2c1714;
-  }
+/*
+ * Dark mode is an explicit, user-controllable choice (see
+ * context/ThemeContext.jsx), not just a `prefers-color-scheme` echo.
+ * ThemeProvider sets `data-theme` on <html> — to a stored preference if
+ * the user already picked one, otherwise to whatever the OS reports on
+ * first visit. Either way, this attribute is the single source of
+ * truth these rules key off of, so there's exactly one dark-mode code
+ * path instead of one for "OS says dark" and a separate one for "user
+ * clicked the toggle."
+ */
+:root[data-theme="dark"] {
+  --color-ink: #eef4f3;
+  --color-ink-soft: #a6bab6;
+  --color-paper: #0b1312;
+  --color-surface: #121e1c;
+  --color-line: #22302d;
+
+  --color-primary: #35b3aa;
+  --color-primary-hover: #4fc7be;
+  --color-primary-soft: rgba(53, 179, 170, 0.16);
+
+  --color-verified: #4fa873;
+  --color-verified-bg: #142a1e;
+  --color-stale: #c69a5f;
+  --color-stale-bg: #2a2013;
+  --color-caution: #d17b6a;
+  --color-caution-bg: #2c1714;
 }
 
 * {

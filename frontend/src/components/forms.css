@@ -45,7 +45,7 @@
 }
 
 .form-field__input:focus {
-  border-color: var(--color-amber);
+  border-color: var(--color-primary);
 }
 
 .form-field__input--error {
@@ -95,12 +95,12 @@
 }
 
 .btn--primary {
-  background: var(--color-amber);
+  background: var(--color-primary);
   color: #fff;
 }
 
 .btn--primary:hover:not(:disabled) {
-  background: var(--color-amber-hover);
+  background: var(--color-primary-hover);
 }
 
 .btn--google {
@@ -152,8 +152,8 @@
 }
 
 .role-toggle__option--active {
-  border-color: var(--color-amber);
-  background: rgba(193, 121, 29, 0.06);
+  border-color: var(--color-primary);
+  background: var(--color-primary-soft);
 }
 
 .role-toggle__label {
@@ -217,7 +217,7 @@
 }
 
 .auth-links a {
-  color: var(--color-amber);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
@@ -233,7 +233,7 @@
 }
 
 .auth-switch a {
-  color: var(--color-amber);
+  color: var(--color-primary);
 }
 
 .auth-fineprint {
@@ -253,7 +253,7 @@
   background: none;
   border: none;
   padding: 0;
-  color: var(--color-amber);
+  color: var(--color-primary);
   font: inherit;
   cursor: pointer;
   text-decoration: underline;

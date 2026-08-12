@@ -26,7 +26,7 @@
 }
 
 .auth-panel__mark {
-  color: var(--color-amber);
+  color: var(--color-primary);
   margin-bottom: var(--space-5);
 }
 
