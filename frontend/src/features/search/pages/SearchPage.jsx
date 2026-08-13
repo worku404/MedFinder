@@ -8,15 +8,8 @@ import { useGeolocation } from "../useGeolocation";
 import { SearchBar } from "../components/SearchBar";
 import { LocationBanner } from "../components/LocationBanner";
 import { ResultRow } from "../components/ResultRow";
+import { SearchResultDetailModal } from "../components/SearchResultDetailModal";
 
-// This is the app's landing page (see AppRoutes) and the only page in
-// the product that has to work perfectly with zero setup: no login, no
-// location, nothing but typing a word. Every other state (location
-// granted, pharmacist signed in, etc.) is additive on top of that.
-//
-// Reads an initial `?q=` from the URL so other pages can deep-link
-// straight into a search (e.g. MedicineDetailPage's "Check availability"
-// link) instead of only being reachable by typing into the bar by hand.
 export function SearchPage() {
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -27,11 +20,11 @@ export function SearchPage() {
   const [page, setPage] = useState(1);
   const [results, setResults] = useState([]);
   const [hasMore, setHasMore] = useState(false);
-  // "idle" (nothing searched yet) | "loading" | "ready" | "error"
   const [status, setStatus] = useState("idle");
   const [error, setError] = useState(null);
 
-  // Chat modal state
+  // Detail Modal & Chat Modal state
+  const [selectedResult, setSelectedResult] = useState(null);
   const [activeConversation, setActiveConversation] = useState(null);
   const [chatPharmacyName, setChatPharmacyName] = useState("");
 
@@ -49,9 +42,6 @@ export function SearchPage() {
     }
   };
 
-  // Guards against a slow earlier request overwriting a faster later
-  // one — e.g. typing "para", then "paracetamol" quickly after: if the
-  // "para" request resolves last, it must not clobber the newer results.
   const requestId = useRef(0);
 
   const runSearch = useCallback(
@@ -66,7 +56,7 @@ export function SearchPage() {
           lat: geolocation.coords?.lat,
           lng: geolocation.coords?.lng,
         });
-        if (thisRequest !== requestId.current) return; // superseded
+        if (thisRequest !== requestId.current) return;
         setResults((prev) => (append ? [...prev, ...data.results] : data.results));
         setHasMore(Boolean(data.next));
         setStatus("ready");
@@ -79,10 +69,6 @@ export function SearchPage() {
     [geolocation.coords]
   );
 
-  // Re-run the current query whenever it changes, or whenever location
-  // becomes available (so an already-visible result set gets re-ranked
-  // by distance the moment the user grants permission, instead of
-  // requiring them to retype their search).
   useEffect(() => {
     const trimmed = query.trim();
     setSearchParams(trimmed ? { q: trimmed } : {}, { replace: true });
@@ -94,26 +80,33 @@ export function SearchPage() {
     }
     setPage(1);
     runSearch({ q: trimmed, page: 1, append: false });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [query, geolocation.coords]);
 
   const loadMore = () => {
+    if (status === "loading" || !hasMore) return;
     const nextPage = page + 1;
     setPage(nextPage);
-    runSearch({ q: query, page: nextPage, append: true });
+    runSearch({ q: query.trim(), page: nextPage, append: true });
   };
 
   return (
-    <main className="search-shell__hero">
-      <p className="search-shell__eyebrow">Live availability, Ethiopia</p>
-      <h1 className="search-shell__title">What are you out of?</h1>
-      <p className="search-shell__subtitle">
-        Search by name — typos are fine. Results come from verified pharmacies' own confirmed stock,
-        ranked by best match, freshness, and distance.
-      </p>
+    <main className="search-shell">
+      <section className="search-shell__hero" aria-label="Medicine availability search">
+        <p className="search-shell__eyebrow">Live availability, Ethiopia</p>
+        <h1 className="search-shell__title">What are you out of?</h1>
+        <p className="search-shell__subtitle">
+          Search by name — typos are fine. Results come from verified pharmacies' own confirmed stock,
+          ranked by best match, freshness, and distance.
+        </p>
 
-      <SearchBar value={query} onChange={setQuery} />
-      <LocationBanner status={geolocation.status} onRequest={geolocation.request} />
+        <SearchBar value={query} onChange={setQuery} loading={status === "loading"} />
+
+        <LocationBanner
+          state={geolocation.state}
+          coords={geolocation.coords}
+          onRequest={geolocation.request}
+        />
+      </section>
 
       <section className="search-results" aria-live="polite">
         {status === "idle" && (
@@ -145,7 +138,7 @@ export function SearchPage() {
             <ul className="search-results__list">
               {results.map((result) => (
                 <li key={result.id}>
-                  <ResultRow result={result} onChatClick={handleStartChat} />
+                  <ResultRow result={result} onViewDetails={setSelectedResult} />
                 </li>
               ))}
             </ul>
@@ -163,6 +156,16 @@ export function SearchPage() {
         )}
       </section>
 
+      {/* Selected Result Detail Dossier Modal */}
+      {selectedResult && (
+        <SearchResultDetailModal
+          result={selectedResult}
+          onClose={() => setSelectedResult(null)}
+          onStartChat={handleStartChat}
+        />
+      )}
+
+      {/* Duplex Chat Modal */}
       {activeConversation && (
         <ChatModal
           conversationId={activeConversation.id}

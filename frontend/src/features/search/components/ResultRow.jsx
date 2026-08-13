@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { FreshnessSignal } from "./FreshnessSignal";
 
 function freshnessLabel(result) {
@@ -10,11 +9,7 @@ function freshnessLabel(result) {
   return `Confirmed ${hoursAgo} hours ago`;
 }
 
-// A dense list row, not a card — this is a ranked list where order is
-// the point, so the layout should read as "a scannable readout," not a
-// grid of interchangeable tiles. Price/distance use the monospace face
-// (shared with the rest of the app) since they're data, not prose.
-export function ResultRow({ result, onChatClick }) {
+export function ResultRow({ result, onViewDetails }) {
   const outOfStock = result.quantity_available === 0;
 
   return (
@@ -26,44 +21,39 @@ export function ResultRow({ result, onChatClick }) {
       <div className="result-row__body">
         <div className="result-row__headline">
           <h2 className="result-row__medicine">
-            <Link to={`/medicines/${result.medicine.slug}`}>
-              {result.medicine.name}
-              {result.medicine.strength ? <span className="result-row__strength"> {result.medicine.strength}</span> : null}
-            </Link>
+            {result.medicine.name}
+            {result.medicine.strength && (
+              <span className="result-row__strength"> {result.medicine.strength}</span>
+            )}
           </h2>
           <span className={`result-row__availability${outOfStock ? " result-row__availability--out" : ""}`}>
             {result.availability}
           </span>
         </div>
 
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem" }}>
-          <p className="result-row__pharmacy" style={{ margin: 0 }}>
-            <Link to={`/pharmacies/${result.pharmacy.id}`}>{result.pharmacy.name}</Link>
-          </p>
-          {onChatClick && (
-            <button
-              type="button"
-              className="btn btn--google"
-              style={{ width: "auto", padding: "0.25rem 0.65rem", fontSize: "0.8rem" }}
-              onClick={() => onChatClick(result.pharmacy)}
-            >
-              Chat with Pharmacist
-            </button>
-          )}
-        </div>
-        <p className="result-row__address">{result.pharmacy.address || "Address not on file"}</p>
+        <p className="result-row__address">{result.pharmacy.address || result.pharmacy.name}</p>
 
-        <p className="result-row__meta">
-          <span className="result-row__price">ETB {Number(result.price).toFixed(2)}</span>
-          {result.distance_km != null && (
-            <span className="result-row__distance">{result.distance_km.toFixed(1)} km away</span>
-          )}
-          <span className={`result-row__freshness${result.is_stale ? " result-row__freshness--stale" : ""}`}>
-            {freshnessLabel(result)}
-          </span>
-        </p>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: "0.5rem", marginTop: "0.5rem" }}>
+          <p className="result-row__meta" style={{ margin: 0 }}>
+            <span className="result-row__price">ETB {Number(result.price).toFixed(2)}</span>
+            {result.distance_km != null && (
+              <span className="result-row__distance">{result.distance_km.toFixed(1)} km away</span>
+            )}
+            <span className={`result-row__freshness${result.is_stale ? " result-row__freshness--stale" : ""}`}>
+              {freshnessLabel(result)}
+            </span>
+          </p>
+
+          <button
+            type="button"
+            className="btn btn--primary"
+            style={{ width: "auto", padding: "0.35rem 0.85rem", fontSize: "0.85rem" }}
+            onClick={() => onViewDetails(result)}
+          >
+            View Details ▾
+          </button>
+        </div>
       </div>
     </article>
   );
 }
-
