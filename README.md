@@ -17,7 +17,7 @@ MedFinder addresses the critical problem of medicine scarcity and stock unpredic
 
 ## 2. Key Features
 
-### 🔍 Geospatial & Typo-Tolerant Search
+### Geospatial & Typo-Tolerant Search
 * **PostgreSQL Trigram Search (`pg_trgm`)**: Fuzzy matching algorithm that handles misspellings, brand aliases, and canonical generic INN names with zero external search index dependencies.
 * **PostGIS Distance Ranking**: Calculates real-time geodetic proximity from the patient's browser coordinates (`Point(lng, lat)`).
 * **Segmented Confirmation Rails**: Visual 2026 ledger meters indicating data freshness:
@@ -25,16 +25,16 @@ MedFinder addresses the critical problem of medicine scarcity and stock unpredic
   * **Aging (≤ 48 hours)**: 58% amber segmented rail (*"Counted this week"*).
   * **Stale (> 48 hours)**: 22% muted rail (*"Not counted lately"*).
 
-### 🏥 Multi-Tenant Pharmacy & Staff Management
+### Multi-Tenant Pharmacy & Staff Management
 * **Branch Verification Queue**: Newly registered pharmacies start in `PENDING` status and only become searchable after administrative license verification.
 * **Multi-Staff Collaboration**: Pharmacy owners can generate invite codes and approve or reject staff pharmacist membership applications.
 * **Shared Inventory & Inbox**: Approved pharmacists manage batch prices, stock counts, and answer customer inquiries via a unified store inbox.
 
-### 💬 Real-Time Duplex Chat & Notifications
+### Real-Time Duplex Chat & Notifications
 * **WebSocket Consultations (Django Channels + Daphne)**: Direct, private communication channel between a patient and on-duty pharmacists.
 * **Centralized Dispatch Engine**: Multi-channel notifications delivering real-time in-app toasts over WebSockets and asynchronous email alerts via Celery.
 
-### 💊 Medicine Catalog & 2026 Anti-Generic UI
+### Medicine Catalog & 2026 Anti-Generic UI
 * **Canonical Registry**: Structured database of therapeutic categories, dosage forms, strengths, and prescription flags.
 * **High-Density Ledger Layout**: Sticky filter toolbar, instant search, "No prescription" OTC toggle, category chip scroller, and 44×44px cached thumbnails with SVG fallback glyphs.
 * **Full Theme Support**: High-contrast clinical typography, custom tokens, and native light/dark mode support.
