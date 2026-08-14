@@ -41,8 +41,13 @@
 
   --color-verified: #2f7d4f;
   --color-verified-bg: #e7f3ec;
-  --color-stale: #a9793c;
-  --color-stale-bg: #f7efe1;
+  --color-fresh: #2f7d4f;
+  --color-fresh-soft: #e7f3ec;
+  --color-aging: #a9793c;
+  --color-aging-soft: #f7efe1;
+  --color-stale: #71807e;
+  --color-stale-soft: #e2ebe9;
+  --color-surface-sunk: #e2ebe9;
   --color-caution: #b3503f;
   --color-caution-bg: #fbeae7;
 
@@ -52,8 +57,8 @@
      color changes. */
   --color-focus: var(--color-primary);
 
-  --font-display: "Space Grotesk", "Segoe UI", system-ui, sans-serif;
-  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-display: "Bricolage Grotesque", "Space Grotesk", "Segoe UI", system-ui, sans-serif;
+  --font-body: "Public Sans", "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", "SFMono-Regular", Menlo, monospace;
 
   --text-2xl: 2rem;
@@ -94,6 +99,7 @@
   --color-ink-soft: #a6bab6;
   --color-paper: #0b1312;
   --color-surface: #121e1c;
+  --color-surface-sunk: #182825;
   --color-line: #22302d;
 
   --color-primary: #35b3aa;
@@ -102,8 +108,12 @@
 
   --color-verified: #4fa873;
   --color-verified-bg: #142a1e;
-  --color-stale: #c69a5f;
-  --color-stale-bg: #2a2013;
+  --color-fresh: #4fa873;
+  --color-fresh-soft: #142a1e;
+  --color-aging: #e5a95d;
+  --color-aging-soft: #2e2110;
+  --color-stale: #8a9c99;
+  --color-stale-soft: #1a2725;
   --color-caution: #d17b6a;
   --color-caution-bg: #2c1714;
 }
@@ -125,6 +135,18 @@ body {
   outline-offset: 2px;
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -134,3 +156,4 @@ body {
     transition-duration: 0.001ms !important;
   }
 }
+
