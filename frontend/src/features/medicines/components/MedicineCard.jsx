@@ -1,7 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
 import { PillGlyph } from "../../../components/PillGlyph";
-import { MedicineTag } from "./MedicineTag";
 import { medicineImageSrc } from "../utils";
 
 export function MedicineCard({ medicine }) {
@@ -10,7 +9,6 @@ export function MedicineCard({ medicine }) {
   const [currentSrc, setCurrentSrc] = useState(primarySrc);
 
   const handleError = () => {
-    // If local thumbnail fails, fallback to direct image_url before showing glyph
     if (currentSrc !== medicine.image_url && medicine.image_url) {
       setCurrentSrc(medicine.image_url);
     } else {
@@ -33,7 +31,9 @@ export function MedicineCard({ medicine }) {
         <p className="medicine-card__name">{medicine.name}</p>
         {medicine.category?.name && <p className="medicine-card__category">{medicine.category.name}</p>}
         {meta && <p className="medicine-card__meta">{meta}</p>}
-        <MedicineTag requiresPrescription={medicine.requires_prescription} />
+        <span className={medicine.requires_prescription ? "med-badge med-badge--rx" : "med-badge med-badge--otc"}>
+          {medicine.requires_prescription ? "Prescription required" : "Over the counter"}
+        </span>
       </div>
     </Link>
   );
