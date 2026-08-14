@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import { medicinesApi } from "../api";
 import { medicineImageSrc } from "../utils";
-import { MedicineTag } from "../components/MedicineTag";
 import { PillGlyph } from "../../../components/PillGlyph";
 import { StatusBanner } from "../../../components/StatusBanner";
 
@@ -62,7 +61,9 @@ export function MedicineDetailPage() {
           <p className="medicine-detail__meta">
             {[medicine.dosage_form_display, medicine.strength].filter(Boolean).join(" · ")}
           </p>
-          <MedicineTag requiresPrescription={medicine.requires_prescription} />
+          <span className={medicine.requires_prescription ? "med-badge med-badge--rx" : "med-badge med-badge--otc"}>
+            {medicine.requires_prescription ? "Prescription required" : "Over the counter"}
+          </span>
           {medicine.description && <p className="medicine-detail__description">{medicine.description}</p>}
           <Link className="btn btn--primary medicine-detail__search-link" to={`/search?q=${encodeURIComponent(medicine.name)}`}>
             Check availability near me

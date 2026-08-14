@@ -7,6 +7,8 @@ from django.shortcuts import render
 from .forms import PharmacyRejectionForm
 from .models import Pharmacy
 
+from notifications.dispatch import notify
+
 
 @admin.register(Pharmacy)
 class PharmacyAdmin(gis_admin.GISModelAdmin):
@@ -25,11 +27,21 @@ class PharmacyAdmin(gis_admin.GISModelAdmin):
 
     @admin.action(description="Approve selected pharmacies")
     def approve_pharmacies(self, request, queryset):
+        pharmacies = list(queryset.select_related("owner"))
         updated = queryset.update(
             status=Pharmacy.Status.VERIFIED,
             rejection_reason="",
             reviewed_by=request.user,
         )
+        for pharmacy in pharmacies:
+            notify(
+                recipient=pharmacy.owner,
+                title="Pharmacy Approved",
+                body=f"Your pharmacy '{pharmacy.name}' has been verified and is now live on MedFinder.",
+                target_url="/pharmacies/mine",
+                send_email=True,
+            )
+
         self.message_user(request, f"{updated} pharmacy(ies) approved.")
 
     @admin.action(description="Reject selected pharmacies with reason...")
@@ -38,11 +50,20 @@ class PharmacyAdmin(gis_admin.GISModelAdmin):
             form = PharmacyRejectionForm(request.POST)
             if form.is_valid():
                 reason = form.cleaned_data["rejection_reason"]
+                pharmacies = list(queryset.select_related("owner"))
                 updated = queryset.update(
                     status=Pharmacy.Status.REJECTED,
                     rejection_reason=reason,
                     reviewed_by=request.user,
                 )
+                for pharmacy in pharmacies:
+                    notify(
+                        recipient=pharmacy.owner,
+                        title="Pharmacy Rejected",
+                        body=f"Your pharmacy '{pharmacy.name}' has been rejected. Reason: {reason}",
+                        target_url="/pharmacies/mine",
+                        send_email=True,
+                    )
                 self.message_user(
                     request,
                     f"{updated} pharmacy(ies) rejected with reason: '{reason}'",

@@ -13,6 +13,11 @@ export default defineConfig({
         target: 'http://backend:8000',
         changeOrigin: true,
       },
+      // Media files proxy (for uploaded images and cached thumbnails)
+      '/media': {
+        target: 'http://backend:8000',
+        changeOrigin: true,
+      },
       // WebSocket proxy (for chat and real-time notifications)
       '/ws': {
         target: 'http://backend:8000',

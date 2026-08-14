@@ -2,66 +2,65 @@
 
 > Digital Medicine Discovery & Real-Time Pharmacist Consultation Platform
 
-MedFinder is a modern healthcare discovery system that connects patients with licensed, verified pharmacies in Ethiopia. It provides instant, typo-tolerant medicine search, PostGIS-powered geospatial distance ranking, data freshness confirmation rails, and real-time bidirectional WebSocket consultations between patients and pharmacists.
+MedFinder is a distributed healthcare discovery and communication platform that connects patients with licensed, verified pharmacies. The platform provides typo-tolerant pharmaceutical search, PostGIS-powered geospatial distance ranking, inventory verification timestamps, and real-time bidirectional WebSocket consultations between patients and pharmacists.
 
 ---
 
-## 1. Project Overview
+## 1. System Overview
 
-MedFinder addresses the critical problem of medicine scarcity and stock unpredictability. Instead of traveling between multiple physical pharmacies, patients can instantly search for prescriptions and over-the-counter medications, check real-time stock levels, inspect how recently the inventory was physically counted by a pharmacist, and consult licensed pharmacy staff directly via real-time duplex chat.
+MedFinder addresses pharmaceutical accessibility challenges by providing real-time visibility into medication availability across distributed retail pharmacies. Patients can search for prescription and over-the-counter medications, inspect stock availability, evaluate data freshness based on pharmacist physical verification timestamps, and initiate secure, real-time consultations with licensed pharmacy staff.
 
 > [!NOTE]
-> **Platform Scope**: MedFinder is explicitly a **discovery, verification, and consultation platform**. It does not process financial transactions, checkout flows, or dispense pharmaceuticals.
+> **Platform Scope**: MedFinder operates strictly as an information discovery, inventory verification, and pharmacist consultation system. The platform does not process payments, handle financial transactions, or dispense pharmaceuticals.
 
 ---
 
-## 2. Key Features
+## 2. Core Capabilities
 
 ### Geospatial & Typo-Tolerant Search
-* **PostgreSQL Trigram Search (`pg_trgm`)**: Fuzzy matching algorithm that handles misspellings, brand aliases, and canonical generic INN names with zero external search index dependencies.
-* **PostGIS Distance Ranking**: Calculates real-time geodetic proximity from the patient's browser coordinates (`Point(lng, lat)`).
-* **Segmented Confirmation Rails**: Visual 2026 ledger meters indicating data freshness:
-  * **Fresh (≤ 12 hours)**: 100% full green segmented rail (*"Counted today"*).
-  * **Aging (≤ 48 hours)**: 58% amber segmented rail (*"Counted this week"*).
-  * **Stale (> 48 hours)**: 22% muted rail (*"Not counted lately"*).
+* **PostgreSQL Trigram Search (`pg_trgm`)**: Employs trigram similarity matching across medication generic names (INN), brand aliases, and therapeutic descriptions without requiring external search engine dependencies.
+* **PostGIS Geospatial Distance Ranking**: Computes real-time geodetic distance calculations based on client coordinates (`Point(longitude, latitude)`), ordering results by physical proximity.
+* **Data Freshness Confirmation Indicators**: Tracks the elapsed duration since a pharmacy staff member physically verified inventory:
+  * **Fresh (≤ 12 hours)**: High-confidence inventory status verified within current operating shifts.
+  * **Aging (≤ 48 hours)**: Standard stock status confirmed within recent operating cycles.
+  * **Stale (> 48 hours)**: Unconfirmed inventory status requiring customer verification.
 
 ### Multi-Tenant Pharmacy & Staff Management
-* **Branch Verification Queue**: Newly registered pharmacies start in `PENDING` status and only become searchable after administrative license verification.
-* **Multi-Staff Collaboration**: Pharmacy owners can generate invite codes and approve or reject staff pharmacist membership applications.
-* **Shared Inventory & Inbox**: Approved pharmacists manage batch prices, stock counts, and answer customer inquiries via a unified store inbox.
+* **Administrative Verification Queue**: Newly registered pharmacy branches remain in a pending state until regulatory license verification is approved by an administrator.
+* **Role-Based Access Control (RBAC)**: Distinguishes between customers, store owners, and staff pharmacists with object-level permissions.
+* **Staff Membership Workflow**: Pharmacy owners issue time-limited invitation codes to onboard licensed pharmacists with approval and revocation workflows.
+* **Unified Pharmacy Workspace**: Approved staff pharmacists share store inventory management and inbound consultation queues.
 
-### Real-Time Duplex Chat & Notifications
-* **WebSocket Consultations (Django Channels + Daphne)**: Direct, private communication channel between a patient and on-duty pharmacists.
-* **Centralized Dispatch Engine**: Multi-channel notifications delivering real-time in-app toasts over WebSockets and asynchronous email alerts via Celery.
+### Real-Time Consultation & Dispatch Engine
+* **Duplex WebSocket Chat**: Secure, room-scoped bidirectional communication powered by Django Channels and Daphne ASGI.
+* **Centralized Dispatch Architecture**: Unified event engine routing real-time client notifications via WebSockets and asynchronous email alerts via Celery task workers.
 
-### Medicine Catalog
-* **Canonical Registry**: Structured database of therapeutic categories, dosage forms, strengths, and prescription flags.
-* **High-Density Ledger Layout**: Sticky filter toolbar, instant search, "No prescription" OTC toggle, category chip scroller, and 44×44px cached thumbnails with SVG fallback glyphs.
-* **Full Theme Support**: High-contrast clinical typography, custom tokens, and native light/dark mode support.
+### Medication Catalog & Structured UI
+* **Therapeutic Classification**: Structured indexing by therapeutic category, international nonproprietary name (INN), dosage form, strength, and prescription requirement.
+* **High-Density Catalog Interface**: Includes client-side filtering, category navigation, prescription toggles, and asset caching via reverse proxy.
 
 ---
 
 ## 3. Technology Stack
 
-| Layer | Technologies |
-|---|---|
-| **Backend Framework** | Python 3.12, Django 6.1, Django REST Framework |
-| **Real-Time & ASGI** | Django Channels 4, Daphne ASGI Server |
-| **Database & GIS** | PostgreSQL 17, PostGIS 3.5, `pg_trgm` extension |
-| **Task Queue & Cache** | Celery 5.4, Redis 7 (Alpine), `RedisPubSubChannelLayer` |
-| **Frontend Framework** | React 18, Vite, React Router v6 |
-| **Styling & Design System** | Vanilla CSS (2026 Anti-Generic Tokens, Bricolage Grotesque, Public Sans, IBM Plex Mono) |
-| **API Documentation** | drf-spectacular (OpenAPI 3.0, Swagger UI, ReDoc) |
-| **Containerization** | Docker, Docker Compose |
+| Component | Technology | Version / Details |
+|---|---|---|
+| **Backend Framework** | Python / Django | Python 3.12, Django 6.1, Django REST Framework 3.15 |
+| **Asynchronous & Real-Time** | Django Channels / Daphne | Channels 4.0, Daphne ASGI Server |
+| **Database & GIS Engine** | PostgreSQL / PostGIS | PostgreSQL 17, PostGIS 3.5, `pg_trgm` extension |
+| **Distributed Task Queue** | Celery / Redis | Celery 5.4, Redis 7 (Alpine), `RedisPubSubChannelLayer` |
+| **Frontend Architecture** | React / Vite | React 18, Vite 5, React Router v6 |
+| **API Specification** | OpenAPI 3.0 | drf-spectacular (Swagger UI, ReDoc) |
+| **Infrastructure** | Docker | Docker Engine 24+, Docker Compose v2 |
 
 ---
 
-## 4. Architecture & Services
+## 4. System Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                      Client Browser                         │
-│   (React 18 + Vite Dev Server / Reverse Proxy on :5173)     │
+│       (React SPA + Reverse Proxy Gateway on :5173)          │
 └──────────────┬───────────────────────────────┬──────────────┘
                │ HTTP /api & /media            │ WebSocket /ws
                ▼                               ▼
@@ -82,155 +81,144 @@ MedFinder addresses the critical problem of medicine scarcity and stock unpredic
                                         └─────────────┘
 ```
 
-### Docker Compose Service Topology
+### Container Topology
 
-| Container Service | Image / Build | Host Port | Container Port | Purpose |
+| Service | Context | Host Port | Container Port | Description |
 |---|---|---|---|---|
-| `frontend` | `./frontend` (Node 20 / Vite) | `5173` | `5173` | React application with `/api` and `/media` reverse proxy |
-| `backend` | `./backend` (Python 3.12 / Daphne) | `8002` | `8000` | Django REST Framework API & Channels ASGI |
-| `celery` | `./backend` (Celery Worker) | — | — | Asynchronous email delivery & background dispatch |
-| `redis` | `redis:7-alpine` | `6380` | `6379` | Channel layer broker & task queue backend |
-| `db` | `postgis/postgis:17-3.5-alpine` | `5434` | `5432` | PostGIS spatial database with trigram indexes |
+| `frontend` | `./frontend` | `5173` | `5173` | Single-page application dev server and proxy gateway |
+| `backend` | `./backend` | `8002` | `8000` | Django REST Framework and Channels ASGI service |
+| `celery` | `./backend` | — | — | Asynchronous worker process for email and event handling |
+| `redis` | `redis:7-alpine` | `6380` | `6379` | Message broker and Channels communication layer |
+| `db` | `postgis/postgis:17-3.5-alpine` | `5434` | `5432` | Relational spatial database |
 
 ---
 
-## 5. Getting Started
+## 5. Installation & Deployment
 
 ### Prerequisites
-* [Docker Desktop](https://www.docker.com/products/docker-desktop/) (v24.0+)
-* [Git](https://git-scm.com/)
+* Docker Engine (v24.0+) and Docker Compose (v2.0+)
+* Git
 
-### 1. Clone the Repository
+### Step 1: Clone Repository
 ```bash
 git clone https://github.com/your-org/medfinder.git
 cd medfinder
 ```
 
-### 2. Environment Configuration
-Create a `.env` file in the root directory:
+### Step 2: Environment Configuration
+Create a `.env` configuration file in the project root:
 ```env
-# Database
+# Database Configuration
 POSTGRES_DB=medfinder
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 POSTGRES_HOST=db
 POSTGRES_PORT=5432
 
-# Django
+# Application Settings
 SECRET_KEY=your-secure-django-secret-key
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1,backend
 
-# Redis & Celery
+# Broker & Cache
 CELERY_BROKER_URL=redis://redis:6379/0
 CELERY_RESULT_BACKEND=redis://redis:6379/0
 
-# Email (Optional / Console by default in Debug)
+# Outbound Email
 EMAIL_BACKEND=django.core.mail.backends.console.EmailBackend
 EMAIL_HOST_USER=notifications@medfinder.et
 ```
 
-### 3. Build and Start the Services
+### Step 3: Initialize Infrastructure
 ```bash
 docker compose up --build -d
 ```
 
-### 4. Apply Database Migrations
+### Step 4: Database Migrations
 ```bash
 docker compose exec backend python manage.py migrate
 ```
 
-### 5. Seed Catalog & Search Data
-Populate the database with therapeutic categories, medicines, test pharmacies, and stock inventory:
+### Step 5: Data Seeding
+Populate therapeutic categories, canonical medicines, regional pharmacies, and inventory data:
 ```bash
-# Seed master medicine catalog
-docker compose exec backend python manage.py shell < mock_data/seed_medicines.py
-
-# Seed verified pharmacies, stock inventory, and coordinates
-docker compose exec backend python manage.py shell < mock_data/seed_search_data.py
+docker compose exec -T backend python manage.py shell < mock_data/seed_medicines.py
 ```
 
-### 6. Create an Administrator Superuser
+### Step 6: Create Administrative Account
 ```bash
 docker compose exec backend python manage.py createsuperuser
 ```
 
 ---
 
-## 6. Application Access & Endpoints
+## 6. Access Points & Documentation
 
-| Resource | URL | Description |
+| Component | URL | Description |
 |---|---|---|
-| **Frontend Application** | [http://localhost:5173](http://localhost:5173) | Medicine search, catalog, pharmacy portal, and chat |
-| **Medicine Catalog** | [http://localhost:5173/medicines](http://localhost:5173/medicines) | High-density ledger registry with filters and coverage |
-| **Django Admin** | [http://localhost:8002/admin/](http://localhost:8002/admin/) | Pharmacy verification queue and license auditing |
-| **Swagger API Docs** | [http://localhost:8002/api/docs/](http://localhost:8002/api/docs/) | Interactive OpenAPI 3.0 Swagger UI documentation |
-| **ReDoc API Docs** | [http://localhost:8002/api/docs/redoc/](http://localhost:8002/api/docs/redoc/) | Detailed ReDoc endpoint reference |
-| **OpenAPI Schema** | [http://localhost:8002/api/schema/](http://localhost:8002/api/schema/) | Raw OpenAPI YAML/JSON schema endpoint |
+| **Web Application** | [http://localhost:5173](http://localhost:5173) | Primary client user interface |
+| **Medicine Catalog** | [http://localhost:5173/medicines](http://localhost:5173/medicines) | Structured medication registry |
+| **Administration Console** | [http://localhost:8002/admin/](http://localhost:8002/admin/) | Django administration portal |
+| **OpenAPI Documentation** | [http://localhost:8002/api/docs/](http://localhost:8002/api/docs/) | Interactive Swagger UI API explorer |
+| **API Schema Specification** | [http://localhost:8002/api/docs/redoc/](http://localhost:8002/api/docs/redoc/) | ReDoc technical specification |
 
 ---
 
-## 7. Primary REST API Reference
+## 7. API Specification Overview
 
-### Public Endpoints (No Auth Required)
-* `GET /api/search/?q={name}&lat={lat}&lng={lng}&page={n}` — Fuzzy trigram stock search with optional geodetic distance sorting.
-* `GET /api/medicines/?search={term}&category__slug={slug}&requires_prescription={bool}&ordering={field}` — Paginated medicine catalog.
-* `GET /api/medicines/categories/` — Master list of therapeutic categories.
-* `GET /api/pharmacies/` — List of all administrator-verified pharmacies.
-* `GET /api/pharmacies/{id}/` — Verified public pharmacy profile.
+### Public Endpoints
+* `GET /api/search/?q={query}&lat={latitude}&lng={longitude}&page={page}` — Geospatial and trigram inventory discovery.
+* `GET /api/medicines/?search={term}&category__slug={slug}&requires_prescription={bool}&ordering={field}` — Paginated catalog index.
+* `GET /api/medicines/categories/` — Master therapeutic categories list.
+* `GET /api/pharmacies/` — Directory of verified pharmacies.
+* `GET /api/pharmacies/{id}/` — Public profile of a verified pharmacy branch.
 
 ### Authenticated Endpoints (Bearer JWT Required)
-* `POST /api/auth/login/` — Authenticate and receive access/refresh tokens.
-* `POST /api/auth/register/` — Customer or Pharmacist registration.
-* `POST /api/auth/token/refresh/` — Rotate access token using refresh token.
-* `GET /api/pharmacies/mine/` — Owner/staff pharmacy management.
-* `POST /api/pharmacies/mine/{id}/invites/` — Generate staff invite link.
-* `POST /api/pharmacies/join/` — Submit staff invite code to join a pharmacy.
-* `GET /api/inventory/` — Per-pharmacy inventory management with batch timestamps.
-* `GET /api/conversations/` — Customer or pharmacist consultation inbox.
-* `POST /api/conversations/start/` — Initiate consultation with a verified pharmacy.
+* `POST /api/auth/login/` — Authentication endpoint returning access and refresh tokens.
+* `POST /api/auth/register/` — Registration endpoint for customers and pharmacists.
+* `POST /api/auth/token/refresh/` — Rotates access token using a valid refresh token.
+* `GET /api/pharmacies/mine/` — Store management for pharmacy owners and staff.
+* `POST /api/pharmacies/mine/{id}/invites/` — Generates staff onboarding invitation codes.
+* `POST /api/pharmacies/join/` — Processes staff application via invitation code.
+* `GET /api/inventory/` — Per-pharmacy inventory stock entries and pricing.
+* `GET /api/conversations/` — Customer and pharmacist consultation inbox.
+* `POST /api/conversations/start/` — Initializes a consultation thread with a pharmacy.
 
 ---
 
-## 8. Development Commands & Testing
+## 8. Verification & Maintenance
 
-### Running Frontend Tests & Production Build
+### Build Verification
 ```bash
 docker compose run --rm frontend npm run build
 ```
 
-### Running Backend Unit & Integration Tests
+### Test Suite Execution
 ```bash
 docker compose exec backend python manage.py test
 ```
 
-### Viewing Container Logs
+### Log Monitoring
 ```bash
-# All logs
-docker compose logs -f
-
-# Specific service logs
-docker compose logs -f backend
-docker compose logs -f celery
-docker compose logs -f frontend
+docker compose logs -f backend celery
 ```
 
-### Stopping All Services
+### Service Teardown
 ```bash
 docker compose down
 ```
 
 ---
 
-## 9. Security & Data Integrity Invariants
+## 9. Security Invariants
 
-1. **Deterministic Access Control**:
-   * Public users can freely discover verified medicines and pharmacy locations.
-   * Modifying inventory, managing store details, or generating invite links strictly requires an authenticated pharmacist associated with that store (`IsApprovedStaffOrOwner` / `IsPharmacyOwner`).
-2. **N+1 Query Safety**:
-   * All list views, admin bulk approval actions, and serializers enforce `select_related()` and `prefetch_related()` across user relations and store models.
-3. **Channel Security**:
-   * Chat WebSockets enforce session ownership; only the customer who initiated the consultation and approved pharmacists employed by that specific store can join the duplex room.
+1. **Authentication Token Lifecycle**:
+   * Access tokens maintain a 30-minute lifespan.
+   * Refresh tokens maintain a 7-day lifespan with automatic single-use rotation and database blacklisting to prevent replay attacks.
+2. **Channel Authorization**:
+   * WebSocket connections enforce room-scoped ownership, permitting only the initiating patient and verified pharmacy staff members to participate in consultation channels.
+3. **Query Optimization**:
+   * All relational querysets employ eager loading (`select_related` and `prefetch_related`) to prevent N+1 query execution.
 
 ---
 

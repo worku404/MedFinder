@@ -41,18 +41,9 @@ class MedicineSerializer(serializers.ModelSerializer):
         if not image_source:
             return None
         try:
-            
             # On-demand resize to 300x300, center-cropped, 85% JPEG quality
             thumb = get_thumbnail(image_source, "300x300", crop="center", quality=85)
-            request = self.context.get("request")
-            if request and thumb.url.startswith("/"):
-                return request.build_absolute_uri(thumb.url)
             return thumb.url
         except Exception:
-            if obj.image_url:
-                return obj.image_url
-            if obj.image:
-                request = self.context.get("request")
-                return request.build_absolute_uri(obj.image.url) if request else obj.image.url
             return None
 
