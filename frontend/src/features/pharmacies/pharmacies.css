@@ -1,16 +1,319 @@
+/* ── Pharmacist Portal Layout ────────────────────────────── */
+
+.portal-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: clamp(24px, 4vw, 48px) clamp(16px, 4vw, 24px) 80px;
+}
+
+.portal-page__header {
+  margin-bottom: var(--space-5);
+}
+
+.portal-page__eyebrow {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--color-primary);
+  margin-bottom: var(--space-1);
+}
+
+.portal-page__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.75rem, 4vw, 2.25rem);
+  letter-spacing: -0.01em;
+  line-height: 1.15;
+  margin: 0 0 var(--space-2);
+}
+
+.portal-page__subtitle {
+  font-size: 1rem;
+  color: var(--color-ink-soft);
+  max-width: 55ch;
+  line-height: 1.5;
+}
+
+/* ── Portal Sub-Navigation Tabs ─────────────────────────── */
+
+.portal-subnav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--color-line);
+  margin-bottom: var(--space-5);
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.portal-subnav__tabs {
+  display: flex;
+  gap: var(--space-5);
+}
+
+.portal-subnav__tab {
+  padding: 12px 2px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  transition: color 120ms ease, border-color 120ms ease;
+}
+
+.portal-subnav__tab:hover {
+  color: var(--color-ink);
+}
+
+.portal-subnav__tab--active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+}
+
+.portal-subnav__badge {
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: var(--radius-pill);
+  font-family: var(--font-mono);
+  font-weight: 600;
+}
+
+.portal-subnav__cta {
+  width: auto;
+}
+
+/* ── KPI Overview Summary Grid ───────────────────────────── */
+
+.portal-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-5);
+}
+
+.portal-kpi-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: 16px 20px;
+  box-shadow: var(--shadow-sm);
+}
+
+.portal-kpi-card__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-soft);
+  margin-bottom: var(--space-1);
+}
+
+.portal-kpi-card__value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-ink);
+}
+
+/* ── Store Cards Grid ────────────────────────────────────── */
+
+.portal-store-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+  gap: var(--space-4);
+}
+
+@media (max-width: 600px) {
+  .portal-store-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.store-portal-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: border-color 140ms ease;
+}
+
+.store-portal-card:hover {
+  border-color: var(--color-primary);
+}
+
+.store-portal-card__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-3);
+}
+
+.store-portal-card__title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: var(--space-1);
+}
+
+.store-portal-card__role {
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.store-portal-card__role--owner {
+  color: var(--color-primary);
+}
+
+.store-portal-card__role--staff {
+  color: var(--color-ink-soft);
+}
+
+.store-portal-card__address {
+  color: var(--color-ink-soft);
+  font-size: 0.9rem;
+  margin-bottom: var(--space-2);
+}
+
+.store-portal-card__license {
+  font-size: 0.8125rem;
+  color: var(--color-ink-soft);
+  margin-bottom: var(--space-4);
+}
+
+.store-portal-card__license code {
+  font-family: var(--font-mono);
+  background: var(--color-paper);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+}
+
+/* ── Store Card Action Footer ────────────────────────────── */
+
+.store-portal-card__footer {
+  border-top: 1px solid var(--color-line);
+  padding-top: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.store-portal-card__cta {
+  width: auto;
+}
+
+/* ── Store Admin Dropdown ─────────────────────────────────── */
+
+.store-admin-dropdown {
+  position: relative;
+}
+
+.store-admin-dropdown__trigger {
+  width: auto;
+  font-size: 0.85rem;
+  padding: 8px 14px;
+}
+
+.store-admin-dropdown__menu {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+  min-width: 210px;
+  padding: 6px 0;
+  z-index: 50;
+}
+
+.store-admin-dropdown__item {
+  display: block;
+  width: 100%;
+  padding: 9px 16px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-ink);
+  text-decoration: none;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  transition: background 120ms ease, color 120ms ease;
+}
+
+.store-admin-dropdown__item:hover {
+  background: var(--color-paper);
+  color: var(--color-primary);
+}
+
+.store-admin-dropdown__button {
+  font-family: var(--font-body);
+}
+
+/* ── Empty State ─────────────────────────────────────────── */
+
+.portal-empty-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  padding: 36px 24px;
+  text-align: center;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.portal-empty-card__title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: var(--space-2);
+}
+
+.portal-empty-card__text {
+  font-size: 0.95rem;
+  color: var(--color-ink-soft);
+  margin-bottom: var(--space-4);
+  line-height: 1.5;
+}
+
+.portal-empty-card__actions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+/* ── Shared Status Elements ──────────────────────────────── */
+
 .pharmacy-status {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
-  font-size: var(--text-sm);
+  padding: 4px 10px;
+  border-radius: var(--radius-pill);
+  font-size: 0.75rem;
   font-weight: 600;
 }
 
 .pharmacy-status--pending {
-  background: var(--color-line);
-  color: var(--color-ink-soft);
+  background: var(--color-stale-bg);
+  color: var(--color-stale);
 }
 
 .pharmacy-status--verified {
@@ -26,74 +329,4 @@
   gap: var(--space-3);
   padding: var(--space-4);
   width: 100%;
-}
-
-.pharmacy-status__body p {
-  margin: var(--space-1) 0 0;
-  font-weight: 400;
-}
-
-.pharmacy-status__action {
-  width: auto;
-  align-self: flex-start;
-}
-
-.pharmacy-card {
-  margin-bottom: var(--space-4);
-}
-
-.pharmacy-card__head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-}
-
-.pharmacy-card__address {
-  color: var(--color-ink-soft);
-  font-size: var(--text-sm);
-  margin: var(--space-2) 0 var(--space-4);
-}
-
-.pharmacy-card__actions {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  flex-wrap: wrap;
-}
-
-.pharmacy-card__actions .btn {
-  width: auto;
-}
-
-.pharmacy-list__add {
-  width: auto;
-}
-
-.pharmacy-map__hint {
-  font-size: var(--text-xs);
-  color: var(--color-ink-soft);
-  margin: var(--space-2) 0 0;
-}
-
-.pharmacy-form__intro {
-  margin-bottom: var(--space-4);
-  text-align: left;
-}
-
-.share-link__button {
-  width: auto;
-}
-
-.share-link__hint {
-  font-size: var(--text-xs);
-  color: var(--color-ink-soft);
-  margin: var(--space-2) 0 0;
-  word-break: break-all;
-}
-
-.load-more {
-  width: auto;
-  margin-top: var(--space-3);
 }
