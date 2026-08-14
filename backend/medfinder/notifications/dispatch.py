@@ -18,10 +18,12 @@ def notify(
     email_template: str | None = None,
     email_context: dict | None = None,
 ) -> None:
+    """
+    Send a notification to a user, either via WebSocket immediately or via email asynchronously.
+    """
     if not recipient or not recipient.is_authenticated:
         return
 
-    # 1. Live WebSocket push for online users
     try:
         channel_layer = get_channel_layer()
         if channel_layer:
