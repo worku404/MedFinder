@@ -893,17 +893,6 @@
   color: var(--color-primary);
 }
 
-.detail-sheet__btn--chat {
-  background: var(--color-verified-bg);
-  color: var(--color-verified);
-  border: 1.5px solid var(--color-verified);
-}
-
-.detail-sheet__btn--chat:hover {
-  background: var(--color-verified);
-  color: #ffffff;
-}
-
 .detail-sheet__footer-hint {
   font-size: 0.76rem;
   color: var(--color-ink-soft);
