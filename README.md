@@ -34,7 +34,7 @@ MedFinder addresses the critical problem of medicine scarcity and stock unpredic
 * **WebSocket Consultations (Django Channels + Daphne)**: Direct, private communication channel between a patient and on-duty pharmacists.
 * **Centralized Dispatch Engine**: Multi-channel notifications delivering real-time in-app toasts over WebSockets and asynchronous email alerts via Celery.
 
-### Medicine Catalog & 2026 Anti-Generic UI
+### Medicine Catalog
 * **Canonical Registry**: Structured database of therapeutic categories, dosage forms, strengths, and prescription flags.
 * **High-Density Ledger Layout**: Sticky filter toolbar, instant search, "No prescription" OTC toggle, category chip scroller, and 44×44px cached thumbnails with SVG fallback glyphs.
 * **Full Theme Support**: High-contrast clinical typography, custom tokens, and native light/dark mode support.
