@@ -18,7 +18,7 @@ export default defineConfig({
         target: 'http://backend:8000',
         changeOrigin: true,
       },
-      // WebSocket proxy (for chat and real-time notifications)
+      // WebSocket proxy (for real-time notifications)
       '/ws': {
         target: 'http://backend:8000',
         changeOrigin: true,

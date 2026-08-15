@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useAuth } from "../../../context/AuthContext";
-import { chatApi } from "../../chat/api";
-import { ChatModal } from "../../chat/components/ChatModal";
+import { medicinesApi } from "../../medicines/api";
 import { pharmaciesApi } from "../../pharmacies/api";
 import { searchApi } from "../api";
 import { useGeolocation } from "../useGeolocation";
@@ -14,11 +12,11 @@ import { SearchResultDetailModal } from "../components/SearchResultDetailModal";
 
 export function SearchPage() {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const geolocation = useGeolocation();
 
   const [pharmacyStats, setPharmacyStats] = useState(null);
+  const [popularMedicines, setPopularMedicines] = useState([]);
   const [query, setQuery] = useState(searchParams.get("q") || "");
   const [page, setPage] = useState(1);
   const [results, setResults] = useState([]);
@@ -27,24 +25,8 @@ export function SearchPage() {
   const [error, setError] = useState(null);
   const [nearby, setNearby] = useState(false);
 
-  // Detail Modal & Duplex Chat Modal state
+  // Detail Modal state
   const [selectedResult, setSelectedResult] = useState(null);
-  const [activeConversation, setActiveConversation] = useState(null);
-  const [chatPharmacyName, setChatPharmacyName] = useState("");
-
-  const handleStartChat = async (pharmacy) => {
-    if (!user) {
-      navigate(`/login?next=${encodeURIComponent(window.location.pathname + window.location.search)}`);
-      return;
-    }
-    try {
-      const conv = await chatApi.startConversation(pharmacy.id);
-      setChatPharmacyName(pharmacy.name);
-      setActiveConversation(conv);
-    } catch (err) {
-      setError(err.message || "Could not start chat with this pharmacy.");
-    }
-  };
 
   const requestId = useRef(0);
 
@@ -115,6 +97,17 @@ export function SearchPage() {
       .catch(() => {
         // Handled silently to avoid interrupting search flow
       });
+
+    medicinesApi
+      .list({ ordering: "-in_stock_pharmacies_count" })
+      .then((data) => {
+        if (!isMounted) return;
+        setPopularMedicines((data.results || []).slice(0, 10));
+      })
+      .catch(() => {
+        // Handled silently
+      });
+
     return () => {
       isMounted = false;
     };
@@ -168,7 +161,7 @@ export function SearchPage() {
 
       <section className="search-results" aria-live="polite" aria-busy={status === "loading"}>
         {status === "idle" && (
-          <IdleAsksList onPick={setQuery} />
+          <IdleAsksList medicines={popularMedicines} onPick={setQuery} />
         )}
 
         {status === "loading" && results.length === 0 && (
@@ -257,16 +250,6 @@ export function SearchPage() {
         <SearchResultDetailModal
           result={selectedResult}
           onClose={() => setSelectedResult(null)}
-          onStartChat={handleStartChat}
-        />
-      )}
-
-      {/* Duplex Chat Consultation Modal */}
-      {activeConversation && (
-        <ChatModal
-          conversationId={activeConversation.id}
-          pharmacyName={chatPharmacyName}
-          onClose={() => setActiveConversation(null)}
         />
       )}
     </main>

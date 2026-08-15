@@ -17,7 +17,6 @@ import { PharmacyEditPage } from "./features/pharmacies/pages/PharmacyEditPage";
 import { PublicPharmacyPage } from "./features/pharmacies/pages/PublicPharmacyPage";
 import { JoinPharmacyPage } from "./features/pharmacies/pages/JoinPharmacyPage";
 import { PharmacyStaffPage } from "./features/pharmacies/pages/PharmacyStaffPage";
-import { PharmacistInboxPage } from "./features/chat/pages/PharmacistInboxPage";
 
 import { CategoryListPage } from "./features/medicines/pages/CategoryListPage";
 import { CategoryDetailPage } from "./features/medicines/pages/CategoryDetailPage";
@@ -25,6 +24,8 @@ import { MedicineListPage } from "./features/medicines/pages/MedicineListPage";
 import { MedicineDetailPage } from "./features/medicines/pages/MedicineDetailPage";
 
 import { SearchPage } from "./features/search/pages/SearchPage";
+import { ChatPage } from "./features/chat/pages/ChatPage";
+import { PharmacistInboxPage } from "./features/chat/pages/PharmacistInboxPage";
 
 import { InventoryListPage } from "./features/inventory/pages/InventoryListPage";
 import { InventoryCreatePage } from "./features/inventory/pages/InventoryCreatePage";
@@ -37,6 +38,7 @@ import "./features/pharmacies/pharmacies.css";
 import "./features/medicines/medicines.css";
 import "./features/search/search.css";
 import "./features/inventory/inventory.css";
+import "./features/chat/chat.css";
 
 export function AppRoutes() {
   return (
@@ -68,6 +70,14 @@ export function AppRoutes() {
           works as a direct/shareable link. */}
       <Route path="/" element={<SearchPage />} />
       <Route path="/search" element={<SearchPage />} />
+      <Route 
+        path="/chat" 
+        element={
+          <ProtectedRoute>
+            <ChatPage />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Medicines catalog — public, no auth required. The two static
           /medicines/categories* routes are declared before the dynamic
