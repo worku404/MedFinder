@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
 import { FreshnessTag, hoursSince } from "./FreshnessGauge";
 
-export function SearchResultDetailModal({ result, onClose, onStartChat }) {
+export function SearchResultDetailModal({ result, onClose }) {
   const closeRef = useRef(null);
 
   useEffect(() => {
@@ -19,9 +19,6 @@ export function SearchResultDetailModal({ result, onClose, onStartChat }) {
     .filter(Boolean)
     .join(", ");
   const cleanPhone = result.pharmacy.phone_number?.replace(/\s/g, "");
-  const mapsQuery = encodeURIComponent(
-    `${result.pharmacy.name} ${result.pharmacy.address || ""}`.trim()
-  );
 
   return (
     <div className="detail-sheet-backdrop" onClick={onClose} role="presentation">
@@ -104,32 +101,26 @@ export function SearchResultDetailModal({ result, onClose, onStartChat }) {
               Call {result.pharmacy.name}
             </a>
           )}
-
-          <a
-            href={`https://www.google.com/maps/search/?api=1&query=${mapsQuery}`}
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            to={`/pharmacies/${result.pharmacy.id}`}
             className="detail-sheet__btn detail-sheet__btn--secondary"
+            onClick={onClose}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <polygon points="3 11 22 2 13 21 11 13 3 11" />
             </svg>
-            Directions
-          </a>
-
-          <button
-            type="button"
-            className="detail-sheet__btn detail-sheet__btn--chat"
-            onClick={() => {
-              onClose();
-              onStartChat(result.pharmacy);
-            }}
+            Directions & Profile
+          </Link>
+          <Link
+            to={`/chat?pharmacy=${encodeURIComponent(result.pharmacy.name)}&branch=${encodeURIComponent(result.pharmacy.address || "Main Branch")}&medicine=${encodeURIComponent(result.medicine.name)}`}
+            className="detail-sheet__btn detail-sheet__btn--secondary"
+            onClick={onClose}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
             </svg>
-            Consult Pharmacist
-          </button>
+            Chat with Pharmacist
+          </Link>
         </div>
 
         <p className="detail-sheet__footer-hint">

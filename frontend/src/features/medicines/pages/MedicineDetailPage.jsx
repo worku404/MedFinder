@@ -65,9 +65,21 @@ export function MedicineDetailPage() {
             {medicine.requires_prescription ? "Prescription required" : "Over the counter"}
           </span>
           {medicine.description && <p className="medicine-detail__description">{medicine.description}</p>}
-          <Link className="btn btn--primary medicine-detail__search-link" to={`/search?q=${encodeURIComponent(medicine.name)}`}>
-            Check availability near me
-          </Link>
+          <div style={{ display: "flex", gap: "0.75rem", flexWrap: "wrap", marginTop: "1rem" }}>
+            <Link className="btn btn--primary medicine-detail__search-link" to={`/search?q=${encodeURIComponent(medicine.name)}`}>
+              Check availability near me
+            </Link>
+            <Link
+              className="btn btn--outline"
+              to={`/chat?medicine=${encodeURIComponent(medicine.name)}`}
+              style={{ display: "inline-flex", alignItems: "center", gap: "6px" }}
+            >
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+              Ask Pharmacist
+            </Link>
+          </div>
         </div>
       </div>
     </div>

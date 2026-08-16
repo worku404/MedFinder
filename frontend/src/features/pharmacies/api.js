@@ -1,11 +1,5 @@
 import { apiFetch } from "../../lib/apiClient";
-import { buildQuery, cursorFromUrl } from "../../lib/pagination";
-
-// Re-exported so existing imports of `cursorFromUrl` from this module
-// (e.g. MyPharmaciesPage) keep working — the implementation itself now
-// lives in one place (lib/pagination.js) instead of being duplicated
-// per feature.
-export { cursorFromUrl };
+import { buildQuery } from "../../lib/pagination";
 
 export const pharmaciesApi = {
   // Public — no auth required, matches security: [] on these two paths.

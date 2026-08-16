@@ -43,16 +43,22 @@ class ConversationListView(APIView):
     def get(self, request):
         user = request.user
         # Patient sees conversations they initiated; Pharmacist sees conversations for their stores
-        conversations = PharmacyConversation.objects.filter(
-            Q(patient=user) |
-            Q(pharmacy__owner=user) |
-            Q(
-                pharmacy__staff_memberships__pharmacist=user,
-                pharmacy__staff_memberships__status=PharmacyStaff.Status.APPROVED,
+        conversations = (
+            PharmacyConversation.objects.filter(
+                Q(patient=user)
+                | Q(pharmacy__owner=user)
+                | Q(
+                    pharmacy__staff_memberships__pharmacist=user,
+                    pharmacy__staff_memberships__status=PharmacyStaff.Status.APPROVED,
+                )
             )
-        ).select_related("pharmacy", "patient").distinct().order_by("-created")
+            .select_related("pharmacy", "patient")
+            .prefetch_related("read_states", "messages")
+            .distinct()
+            .order_by("-created")
+        )
 
-        serializer = ConversationSerializer(conversations, many=True)
+        serializer = ConversationSerializer(conversations, many=True, context={"request": request})
         return Response(serializer.data)
 
 
@@ -114,10 +120,8 @@ class MarkReadView(APIView):
 
         last_message_id = request.data.get("last_read_message_id")
         if last_message_id is None:
-            return Response(
-                {"detail": "last_read_message_id is required."},
-                status=http_status.HTTP_400_BAD_REQUEST,
-            )
+            latest_msg = conversation.messages.order_by("-id").first()
+            last_message_id = latest_msg.id if latest_msg else 0
 
         state, _ = ConversationReadState.objects.update_or_create(
             user=user,
