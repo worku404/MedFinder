@@ -1,7 +1,4 @@
-import secrets
-from datetime import timedelta
 from django.contrib.gis.geos import Point
-from django.utils import timezone
 from rest_framework import serializers
 from .models import Pharmacy, PharmacyInvite, PharmacyStaff
 
@@ -92,33 +89,49 @@ class PharmacyJoinSerializer(serializers.Serializer):
 
 
 class PharmacyStaffSerializer(serializers.ModelSerializer):
+    pharmacist_email = serializers.EmailField(source="pharmacist.email", read_only=True)
+    pharmacist_username = serializers.CharField(source="pharmacist.username", read_only=True)
     pharmacy_name = serializers.CharField(source="pharmacy.name", read_only=True)
     pharmacy_address = serializers.CharField(source="pharmacy.address", read_only=True)
 
     class Meta:
         model = PharmacyStaff
-        fields = ["id", "pharmacy", "pharmacy_name", "pharmacy_address", "status", "created", "updated",]
+        fields = [
+            "id",
+            "pharmacist",
+            "pharmacist_email",
+            "pharmacist_username",
+            "pharmacy",
+            "pharmacy_name",
+            "pharmacy_address",
+            "status",
+            "created",
+            "updated",
+        ]
         read_only_fields = fields
 
 
 class PharmacyInviteSerializer(serializers.ModelSerializer):
     is_valid = serializers.BooleanField(read_only=True)
+    recipient_email = serializers.EmailField(write_only=True, required=False, allow_blank=True)
 
     class Meta:
         model = PharmacyInvite
-        fields = ["id", "code", "pharmacy", "expires_at", "max_uses", "use_count", "revoked", "is_valid", "created",]
+        fields = [
+            "id",
+            "recipient_email",
+
+            "code",
+            "pharmacy",
+            "expires_at",
+            "max_uses",
+            "use_count",
+            "revoked",
+            "is_valid",
+            "created",
+        ]
         read_only_fields = ["id", "code", "pharmacy", "use_count", "revoked", "is_valid", "created",]
-        extra_kwargs = {"expires_at": {"required": False}, "max_uses": {"required": False, "default": 1}} 
-
-
-    def create(self, validated_data):
-        if "code" not in validated_data:
-            validated_data["code"] = secrets.token_urlsafe(12)
-        # Default expiration to 7 days from now if omitted
-        if "expires_at" not in validated_data:
-            validated_data["expires_at"] = timezone.now() + timedelta(days=7)
-
-        validated_data["pharmacy"] = self.context["pharmacy"]
-        validated_data["created_by"] = self.context["request"].user
-        return super().create(validated_data)
-
+        extra_kwargs = {
+            "expires_at": {"required": False}, 
+            "max_uses": {"required": False, "default": 1}
+        } 

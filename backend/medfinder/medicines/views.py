@@ -1,5 +1,5 @@
 from django.core.cache import cache
-from django.db.models import Count, Max, Q
+from django.db.models import Count, Max, Min, Q
 from rest_framework import viewsets
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
@@ -65,6 +65,13 @@ class MedicineViewSet(viewsets.ReadOnlyModelViewSet):
                         stock_entries__pharmacy__status=Pharmacy.Status.VERIFIED,
                     ),
                     distinct=True,
+                ),
+                from_price=Min(
+                    "stock_entries__price",
+                    filter=Q(
+                        stock_entries__quantity_available__gt=0,
+                        stock_entries__pharmacy__status=Pharmacy.Status.VERIFIED,
+                    ),
                 ),
                 latest_confirmed_at=Max(
                     "stock_entries__last_confirmed_at",
