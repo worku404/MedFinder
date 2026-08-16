@@ -32,10 +32,6 @@ urlpatterns = [
     path('api/auth/', include('dj_rest_auth.urls')),
     path('api/auth/', include('accounts.urls')),  
     path('api/auth/register/', include('dj_rest_auth.registration.urls')),
-    # dj_rest_auth.urls doesn't include a refresh endpoint on its own —
-    # the frontend's apiClient needs this to silently renew a 30-minute
-    # access token instead of forcing re-login. AllowAny because the only
-    # credential this view checks is the refresh token in the body itself.
     path(
         'api/auth/token/refresh/',
         TokenRefreshView.as_view(permission_classes=[AllowAny]),
