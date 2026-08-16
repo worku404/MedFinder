@@ -9,7 +9,11 @@ import { ApiError } from "../../../lib/apiClient";
 // administrator is included defensively — RoleEnum in the registration
 // schema only offers customer/pharmacist, but an existing admin account
 // (created via Django admin) could still land on this page.
-const ROLE_LABEL = { customer: "Customer", pharmacist: "Pharmacist", administrator: "Administrator" };
+const ROLE_LABEL = {
+  customer: "Customer",
+  pharmacist: "Pharmacist",
+  administrator: "Administrator",
+};
 
 export function AccountSettingsPage() {
   const { user, updateProfile, logout } = useAuth();
@@ -23,7 +27,10 @@ export function AccountSettingsPage() {
   const [profileStatus, setProfileStatus] = useState("idle");
   const [profileError, setProfileError] = useState(null);
 
-  const [pwForm, setPwForm] = useState({ new_password1: "", new_password2: "" });
+  const [pwForm, setPwForm] = useState({
+    new_password1: "",
+    new_password2: "",
+  });
   const [pwStatus, setPwStatus] = useState("idle");
   const [pwError, setPwError] = useState(null);
 
@@ -38,7 +45,9 @@ export function AccountSettingsPage() {
       setProfileStatus("saved");
     } catch (err) {
       setProfileStatus("idle");
-      setProfileError(err instanceof ApiError ? err.message : "Couldn't save changes.");
+      setProfileError(
+        err instanceof ApiError ? err.message : "Couldn't save changes.",
+      );
     }
   };
 
@@ -56,7 +65,9 @@ export function AccountSettingsPage() {
       setPwForm({ new_password1: "", new_password2: "" });
     } catch (err) {
       setPwStatus("idle");
-      setPwError(err instanceof ApiError ? err.message : "Couldn't update password.");
+      setPwError(
+        err instanceof ApiError ? err.message : "Couldn't update password.",
+      );
     }
   };
 
@@ -69,7 +80,9 @@ export function AccountSettingsPage() {
     <div className="settings-page">
       <header className="settings-header">
         <div>
-          <p className="settings-header__eyebrow">{ROLE_LABEL[user.role] ?? user.role}</p>
+          <p className="settings-header__eyebrow">
+            {ROLE_LABEL[user.role] ?? user.role}
+          </p>
           <h1 className="settings-header__title">Account settings</h1>
         </div>
         <button className="btn btn--ghost" type="button" onClick={handleLogout}>
@@ -79,32 +92,52 @@ export function AccountSettingsPage() {
 
       <section className="settings-card">
         <h2 className="settings-card__title">Profile</h2>
-        {profileError && <StatusBanner tone="error">{profileError}</StatusBanner>}
-        {profileStatus === "saved" && <StatusBanner tone="info">Profile updated.</StatusBanner>}
+        {profileError && (
+          <StatusBanner tone="error">{profileError}</StatusBanner>
+        )}
+        {profileStatus === "saved" && (
+          <StatusBanner tone="info">Profile updated.</StatusBanner>
+        )}
         <form onSubmit={saveProfile} noValidate>
           <FormField
             id="username"
             label="Username"
             value={profileForm.username}
-            onChange={(e) => setProfileForm({ ...profileForm, username: e.target.value })}
+            onChange={(e) =>
+              setProfileForm({ ...profileForm, username: e.target.value })
+            }
           />
           <div className="settings-row">
             <FormField
               id="first_name"
               label="First name"
               value={profileForm.first_name}
-              onChange={(e) => setProfileForm({ ...profileForm, first_name: e.target.value })}
+              onChange={(e) =>
+                setProfileForm({ ...profileForm, first_name: e.target.value })
+              }
             />
             <FormField
               id="last_name"
               label="Last name"
               value={profileForm.last_name}
-              onChange={(e) => setProfileForm({ ...profileForm, last_name: e.target.value })}
+              onChange={(e) =>
+                setProfileForm({ ...profileForm, last_name: e.target.value })
+              }
             />
           </div>
           {/* email and role are readOnly in AccountsUserDetails — displayed, not editable */}
-          <FormField id="email" label="Email" value={user.email} disabled hint="Contact support to change your email." />
-          <button className="btn btn--primary" type="submit" disabled={profileStatus === "saving"}>
+          <FormField
+            id="email"
+            label="Email"
+            value={user.email}
+            disabled
+            hint="Contact support to change your email."
+          />
+          <button
+            className="btn btn--primary mt-4"
+            type="submit"
+            disabled={profileStatus === "saving"}
+          >
             {profileStatus === "saving" ? "Saving…" : "Save changes"}
           </button>
         </form>
@@ -113,7 +146,9 @@ export function AccountSettingsPage() {
       <section className="settings-card">
         <h2 className="settings-card__title">Password</h2>
         {pwError && <StatusBanner tone="error">{pwError}</StatusBanner>}
-        {pwStatus === "saved" && <StatusBanner tone="info">Password updated.</StatusBanner>}
+        {pwStatus === "saved" && (
+          <StatusBanner tone="info">Password updated.</StatusBanner>
+        )}
         <form onSubmit={changePassword} noValidate>
           <FormField
             id="new_password1"
@@ -121,7 +156,9 @@ export function AccountSettingsPage() {
             type="password"
             autoComplete="new-password"
             value={pwForm.new_password1}
-            onChange={(e) => setPwForm({ ...pwForm, new_password1: e.target.value })}
+            onChange={(e) =>
+              setPwForm({ ...pwForm, new_password1: e.target.value })
+            }
           />
           <FormField
             id="new_password2"
@@ -129,9 +166,15 @@ export function AccountSettingsPage() {
             type="password"
             autoComplete="new-password"
             value={pwForm.new_password2}
-            onChange={(e) => setPwForm({ ...pwForm, new_password2: e.target.value })}
+            onChange={(e) =>
+              setPwForm({ ...pwForm, new_password2: e.target.value })
+            }
           />
-          <button className="btn btn--primary" type="submit" disabled={pwStatus === "saving"}>
+          <button
+            className="btn btn--primary mt-4"
+            type="submit"
+            disabled={pwStatus === "saving"}
+          >
             {pwStatus === "saving" ? "Updating…" : "Update password"}
           </button>
         </form>
