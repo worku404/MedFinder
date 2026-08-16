@@ -43,15 +43,24 @@ MedFinder addresses pharmaceutical accessibility challenges by providing real-ti
 
 ## 3. Technology Stack
 
-| Component | Technology | Version / Details |
+| Layer | Technology | Details / Specification |
 |---|---|---|
-| **Backend Framework** | Python / Django | Python 3.12, Django 6.1, Django REST Framework 3.15 |
-| **Asynchronous & Real-Time** | Django Channels / Daphne | Channels 4.0, Daphne ASGI Server |
-| **Database & GIS Engine** | PostgreSQL / PostGIS | PostgreSQL 17, PostGIS 3.5, `pg_trgm` extension |
-| **Distributed Task Queue** | Celery / Redis | Celery 5.4, Redis 7 (Alpine), `RedisPubSubChannelLayer` |
-| **Frontend Architecture** | React / Vite | React 18, Vite 5, React Router v6 |
-| **API Specification** | OpenAPI 3.0 | drf-spectacular (Swagger UI, ReDoc) |
-| **Infrastructure** | Docker | Docker Engine 24+, Docker Compose v2 |
+| **Frontend** | React 18, Vite, Vanilla CSS | React Router v6, custom CSS design tokens (`tokens.css`), zero UI framework bloat |
+| **Backend** | Django 6.1, Django REST Framework | Python 3.12, DRF 3.15, class-based views, cursor pagination |
+| **ASGI Server** | Daphne | Native ASGI server handling concurrent HTTP & WebSocket traffic |
+| **Real-Time Communication** | Django Channels 4, WebSockets | Bidirectional customer consultation & real-time notification dispatch |
+| **Authentication** | JWT (JSON Web Tokens) | `djangorestframework-simplejwt`, `dj-rest-auth`, `django-allauth` (Google OAuth2) |
+| **Background Processing** | Celery 5.4 | Asynchronous email delivery & inventory notification background tasks |
+| **Cache / Message Broker** | Redis 7 Alpine | Default Redis cache layer & `RedisPubSubChannelLayer` for Channels |
+| **Database** | PostgreSQL 16 / 17 | Relational database container (`postgis/postgis:17-3.5-alpine`) |
+| **Spatial Extension** | PostGIS 3.4 / 3.5 | Geodetic calculations, `PointField(geography=True)`, spatial queries |
+| **Spatial / Search Indexing** | PostGIS GIST & PostgreSQL Trigram (`pg_trgm`) | High-speed spatial index + GIN fuzzy trigram index for typo-tolerant search |
+| **Email Delivery** | SMTP over TLS | Asynchronous transaction and inquiry notifications via Celery |
+| **Geolocation** | W3C Browser Geolocation API | Client-side coordinate acquisition for proximity distance calculation |
+| **Maps** | OpenStreetMap / CartoDB map tiles | Leaflet / OpenRouteService routing and interactive pharmacy locator |
+| **API Protocol** | JSON over HTTPS | RESTful API with OpenAPI 3.0 schema via `drf-spectacular` |
+| **Real-Time Protocol** | WebSocket Secure (WSS) | Token-authenticated duplex WebSocket connection (`ws/chat/`, `ws/notifications/`) |
+
 
 ---
 
