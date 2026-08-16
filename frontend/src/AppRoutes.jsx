@@ -24,6 +24,7 @@ import { MedicineListPage } from "./features/medicines/pages/MedicineListPage";
 import { MedicineDetailPage } from "./features/medicines/pages/MedicineDetailPage";
 
 import { SearchPage } from "./features/search/pages/SearchPage";
+import { LandingPage } from "./features/landing/pages/LandingPage";
 import { ChatPage } from "./features/chat/pages/ChatPage";
 import { PharmacistInboxPage } from "./features/chat/pages/PharmacistInboxPage";
 
@@ -64,11 +65,8 @@ export function AppRoutes() {
         }
       />
 
-      {/* Search — public per FR-SRCH-3, and the app's landing page: a
-          medicine locator's home screen should be "find it now," not a
-          login wall. Both paths render the same page so /search still
-          works as a direct/shareable link. */}
-      <Route path="/" element={<SearchPage />} />
+      {/* Landing and Search Routes */}
+      <Route path="/" element={<LandingPage />} />
       <Route path="/search" element={<SearchPage />} />
       <Route 
         path="/chat" 
