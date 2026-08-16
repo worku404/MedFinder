@@ -1,137 +1,1382 @@
-.app-shell__header {
-  border-bottom: 1px solid var(--color-line);
-  background: var(--color-surface);
-  position: sticky;
-  top: 0;
-  z-index: 20;
+/* =========================================================
+   MedFinder Premium Pharmacy Navbar
+========================================================= */
+
+.app-shell {
+  min-height: 100vh;
+
+  background: var(--app-shell-page-bg, #ffffff);
+  color: var(--app-shell-text, #10231c);
+
+  position: relative;
 }
 
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.app-shell__header {
+  position: sticky;
+  top: 12px;
+
+  z-index: 1000;
+
+  width: calc(100% - 24px);
+  max-width: 1450px;
+
+  margin: 12px auto 0;
+
+  /*
+    IMPORTANT:
+    Do NOT use overflow:hidden here.
+    It clips the mobile dropdown.
+  */
+  overflow: visible;
+
+  background:
+    radial-gradient(
+      circle at 4% 40%,
+      rgba(65, 148, 89, 0.10),
+      transparent 17%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.97),
+      rgba(248, 252, 249, 0.94)
+    );
+
+  border: 1px solid rgba(29, 71, 48, 0.13);
+
+  border-radius: 34px;
+
+  box-shadow:
+    0 18px 45px rgba(20, 55, 37, 0.10),
+    0 4px 12px rgba(20, 55, 37, 0.06);
+
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+}
+
+
+/* =========================================================
+   HEADER ROW
+========================================================= */
+
 .app-shell__row {
-  max-width: 1040px;
-  margin: 0 auto;
+  min-height: 118px;
+
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 14px clamp(16px, 5vw, 32px);
-  gap: 16px;
+
+  gap: 22px;
+
+  padding: 18px 28px 16px 22px;
 }
+
+
+/* =========================================================
+   BRAND
+========================================================= */
 
 .app-shell__brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: 1.05rem;
-  letter-spacing: -0.01em;
-  color: var(--color-ink);
-  text-decoration: none;
+
   flex-shrink: 0;
+
+  color: inherit;
+  text-decoration: none;
+
+  gap: 13px;
 }
 
-.app-shell__brand-mark {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--color-primary);
-  box-shadow: 0 0 0 3px var(--color-primary-soft);
+.app-shell__brand-icon {
+  position: relative;
+
+  width: 62px;
+  height: 62px;
+
+  display: grid;
+  place-items: center;
+
+  color: #2e9a50;
+
+  border-radius: 18px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.92),
+      rgba(224, 245, 228, 0.82)
+    );
+
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    0 7px 18px rgba(45, 130, 69, 0.14);
+
+  overflow: hidden;
 }
 
-.app-shell__menu-toggle {
-  display: none;
-  align-items: center;
+.app-shell__brand-icon::after {
+  content: "";
+
+  position: absolute;
+  inset: 5px;
+
+  border-radius: 14px;
+
+  border: 1px solid rgba(54, 147, 78, 0.15);
+
+  pointer-events: none;
+}
+
+.app-shell__brand-icon svg {
+  width: 48px;
+  height: 48px;
+}
+
+.app-shell__brand-copy {
+  display: flex;
+  flex-direction: column;
   justify-content: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  border: 1px solid var(--color-line);
-  background: transparent;
-  color: var(--color-ink);
-  cursor: pointer;
+
+  min-width: 175px;
 }
+
+.app-shell__brand-name {
+  display: flex;
+  align-items: baseline;
+
+  font-family:
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+
+  font-size: clamp(28px, 2.1vw, 38px);
+
+  line-height: 0.95;
+
+  letter-spacing: -1.7px;
+
+  font-weight: 650;
+}
+
+.app-shell__brand-med {
+  color: #101d19;
+}
+
+.app-shell__brand-finder {
+  color: #43a85c;
+}
+
+.app-shell__tagline {
+  margin-top: 8px;
+
+  color: #7d8984;
+
+  font-size: 9px;
+
+  line-height: 1;
+
+  font-weight: 700;
+
+  letter-spacing: 2px;
+}
+
+
+/* =========================================================
+   NAV
+========================================================= */
 
 .app-shell__nav {
   display: flex;
   align-items: center;
-  gap: 18px;
-}
+  justify-content: flex-end;
 
-.app-shell__nav-divider {
-  width: 1px;
-  height: 20px;
-  background: var(--color-line);
+  gap: 10px;
+
+  flex: 1;
+
+  min-width: 0;
 }
 
 .app-shell__link {
-  font-family: var(--font-body);
-  font-size: 0.9rem;
+  position: relative;
+
+  min-height: 54px;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 10px;
+
+  padding: 0 19px;
+
+  border: 1px solid transparent;
+
+  border-radius: 999px;
+
+  background: transparent;
+
+  color: #16231e;
+
+  font-size: 16px;
   font-weight: 500;
-  color: var(--color-ink-soft);
+
   text-decoration: none;
-  border-bottom: 1px solid transparent;
+
   white-space: nowrap;
+
+  transition:
+    color 180ms ease,
+    background 180ms ease,
+    border-color 180ms ease,
+    box-shadow 180ms ease,
+    transform 180ms ease;
 }
 
-.app-shell__link.active,
-.app-shell__link:hover {
-  color: var(--color-ink);
+.app-shell__link svg {
+  flex-shrink: 0;
 }
 
-.app-shell__link.active {
-  border-bottom-color: var(--color-primary);
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.app-shell__link--search {
+  min-width: 142px;
+
+  color: #4d955b;
+
+  border-color: rgba(70, 156, 86, 0.16);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(246, 252, 247, 0.96)
+    );
+
+  box-shadow:
+    0 5px 15px rgba(50, 125, 66, 0.09),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
 }
+
+.app-shell__link--search::after {
+  content: "";
+
+  position: absolute;
+
+  bottom: -7px;
+
+  left: 50%;
+
+  width: 8px;
+  height: 8px;
+
+  transform: translateX(-50%);
+
+  border-radius: 50%;
+
+  background: #4eb463;
+
+  box-shadow:
+    0 0 0 4px rgba(78, 180, 99, 0.10),
+    0 0 14px rgba(78, 180, 99, 0.45);
+}
+
+.app-shell__link--search:hover {
+  color: #287c3e;
+
+  background: rgba(229, 247, 232, 0.9);
+
+  border-color: rgba(65, 155, 83, 0.25);
+
+  box-shadow:
+    0 8px 22px rgba(52, 135, 69, 0.13);
+}
+
+
+/* =========================================================
+   MEDICINES
+========================================================= */
+
+.app-shell__link--medicines {
+  padding-left: 14px;
+  padding-right: 18px;
+}
+
+.app-shell__link--medicines:hover,
+.app-shell__link--medicines.active {
+  color: #2e9650;
+
+  background: rgba(65, 155, 83, 0.07);
+}
+
+
+/* =========================================================
+   ACCOUNT / SIGN IN
+========================================================= */
+
+.app-shell__link--account,
+.app-shell__link--signin {
+  border-color: rgba(37, 61, 50, 0.12);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.78),
+      rgba(247, 249, 248, 0.75)
+    );
+
+  box-shadow:
+    0 4px 12px rgba(26, 55, 40, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+
+.app-shell__link--account:hover,
+.app-shell__link--signin:hover {
+  color: #318e49;
+
+  border-color: rgba(57, 144, 76, 0.25);
+
+  background: rgba(236, 248, 239, 0.85);
+
+  transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   SIGN OUT
+========================================================= */
 
 .app-shell__link--button {
-  background: none;
-  border: none;
-  border-bottom: 1px solid transparent;
-  padding: 0;
+  border: 0;
+
   cursor: pointer;
-  font: inherit;
+
+  font-family: inherit;
 }
 
 .app-shell__link--button:hover {
-  color: var(--color-caution);
+  color: #2d934a;
+
+  background: rgba(65, 155, 83, 0.07);
 }
 
-/* Below this width, the nav collapses into a toggleable panel — the
-   header row keeps just the brand + a hamburger button, matching the
-   mobile-first priority called out elsewhere in the app (NFR-USE-1). */
-@media (max-width: 720px) {
-  .app-shell__menu-toggle {
-    display: flex;
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.app-shell__nav-divider {
+  width: 1px;
+  height: 42px;
+
+  margin: 0 4px;
+
+  background: rgba(39, 62, 51, 0.12);
+}
+
+
+/* =========================================================
+   THEME CONTAINER
+========================================================= */
+
+.app-shell__theme {
+  display: flex;
+
+  align-items: center;
+  justify-content: center;
+
+  min-height: 54px;
+  min-width: 54px;
+
+  padding: 4px;
+
+  border-radius: 999px;
+
+  border: 1px solid rgba(47, 91, 64, 0.12);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.9),
+      rgba(246, 250, 247, 0.9)
+    );
+
+  box-shadow:
+    0 5px 16px rgba(34, 67, 48, 0.06),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+
+/* =========================================================
+   THEME TOGGLE
+========================================================= */
+
+.theme-toggle {
+  width: 44px;
+  height: 44px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-shrink: 0;
+
+  border: 1px solid rgba(47, 91, 64, 0.12);
+
+  border-radius: 50%;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.96),
+      rgba(232, 247, 235, 0.9)
+    );
+
+  color: #287c3e;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 4px 12px rgba(38, 105, 52, 0.10),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+
+  transition:
+    transform 180ms ease,
+    background 180ms ease,
+    color 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px) rotate(8deg);
+
+  color: #1f7135;
+
+  background:
+    linear-gradient(
+      145deg,
+      #ffffff,
+      #dff5e3
+    );
+
+  box-shadow:
+    0 7px 18px rgba(38, 105, 52, 0.16);
+}
+
+.theme-toggle:active {
+  transform: scale(0.94);
+}
+
+.theme-toggle:focus {
+  outline: none;
+}
+
+.theme-toggle:focus-visible {
+  outline: 2px solid rgba(65, 155, 83, 0.4);
+
+  outline-offset: 3px;
+}
+
+.theme-toggle__icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+
+/* =========================================================
+   PHARMACY WAVE
+========================================================= */
+
+.app-shell__wave {
+  position: absolute;
+
+  left: 0;
+  right: 0;
+
+  bottom: -1px;
+
+  height: 50px;
+
+  pointer-events: none;
+
+  overflow: hidden;
+}
+
+.app-shell__wave svg {
+  display: block;
+
+  width: 100%;
+  height: 100%;
+}
+
+.app-shell__wave-back {
+  fill: rgba(103, 181, 112, 0.09);
+}
+
+.app-shell__wave-line {
+  fill: none;
+
+  stroke: rgba(86, 172, 98, 0.48);
+
+  stroke-width: 2;
+}
+
+
+/* =========================================================
+   MOBILE MENU BUTTON
+========================================================= */
+
+.app-shell__menu-toggle {
+  display: none;
+
+  width: 46px;
+  height: 46px;
+
+  align-items: center;
+  justify-content: center;
+
+  margin-left: auto;
+
+  border: 1px solid rgba(42, 75, 55, 0.12);
+
+  border-radius: 14px;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(255, 255, 255, 0.95),
+      rgba(237, 248, 240, 0.9)
+    );
+
+  color: #1d3026;
+
+  cursor: pointer;
+
+  box-shadow:
+    0 5px 14px rgba(30, 80, 43, 0.08);
+
+  transition:
+    transform 180ms ease,
+    background 180ms ease;
+}
+
+.app-shell__menu-toggle:hover {
+  transform: translateY(-1px);
+
+  background: #e9f7ec;
+}
+
+
+/* =========================================================
+   DARK MODE
+========================================================= */
+
+[data-theme="dark"] .app-shell,
+.dark .app-shell {
+  --app-shell-page-bg: #06100d;
+  --app-shell-text: #edf8f0;
+
+  background: #06100d;
+}
+
+[data-theme="dark"] .app-shell__header,
+.dark .app-shell__header {
+  background:
+    radial-gradient(
+      circle at 4% 42%,
+      rgba(57, 149, 72, 0.16),
+      transparent 18%
+    ),
+    radial-gradient(
+      circle at 84% 100%,
+      rgba(42, 113, 56, 0.09),
+      transparent 25%
+    ),
+    linear-gradient(
+      180deg,
+      rgba(5, 21, 16, 0.98),
+      rgba(4, 15, 12, 0.97)
+    );
+
+  border-color: rgba(100, 183, 111, 0.17);
+
+  box-shadow:
+    0 18px 50px rgba(0, 0, 0, 0.34),
+    0 0 35px rgba(51, 144, 66, 0.04);
+
+  color: #f0fff4;
+}
+
+[data-theme="dark"] .app-shell__brand-icon,
+.dark .app-shell__brand-icon {
+  color: #70cf79;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(23, 57, 35, 0.95),
+      rgba(8, 34, 20, 0.92)
+    );
+}
+
+[data-theme="dark"] .app-shell__brand-med,
+.dark .app-shell__brand-med {
+  color: #f4faf6;
+}
+
+[data-theme="dark"] .app-shell__brand-finder,
+.dark .app-shell__brand-finder {
+  color: #65c96f;
+}
+
+[data-theme="dark"] .app-shell__tagline,
+.dark .app-shell__tagline {
+  color: #7d9186;
+}
+
+[data-theme="dark"] .app-shell__link,
+.dark .app-shell__link {
+  color: #edf7f0;
+}
+
+[data-theme="dark"] .app-shell__link--search,
+.dark .app-shell__link--search {
+  color: #79d681;
+
+  border-color: rgba(91, 192, 103, 0.27);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(13, 44, 24, 0.96),
+      rgba(7, 29, 17, 0.96)
+    );
+}
+
+[data-theme="dark"] .app-shell__link--search:hover,
+.dark .app-shell__link--search:hover {
+  color: #9be7a0;
+
+  background: rgba(29, 91, 40, 0.35);
+
+  border-color: rgba(91, 200, 104, 0.4);
+}
+
+[data-theme="dark"] .app-shell__link--medicines:hover,
+[data-theme="dark"] .app-shell__link--medicines.active,
+.dark .app-shell__link--medicines:hover,
+.dark .app-shell__link--medicines.active {
+  color: #75d37f;
+
+  background: rgba(73, 181, 87, 0.09);
+}
+
+[data-theme="dark"] .app-shell__link--account,
+[data-theme="dark"] .app-shell__link--signin,
+.dark .app-shell__link--account,
+.dark .app-shell__link--signin {
+  color: #f1f8f3;
+
+  border-color: rgba(137, 170, 147, 0.20);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(10, 28, 20, 0.82),
+      rgba(6, 20, 14, 0.82)
+    );
+}
+
+[data-theme="dark"] .app-shell__nav-divider,
+.dark .app-shell__nav-divider {
+  background: rgba(144, 177, 153, 0.15);
+}
+
+[data-theme="dark"] .app-shell__theme,
+.dark .app-shell__theme {
+  border-color: rgba(117, 170, 128, 0.20);
+
+  background:
+    linear-gradient(
+      180deg,
+      rgba(13, 35, 24, 0.95),
+      rgba(7, 24, 16, 0.95)
+    );
+}
+
+[data-theme="dark"] .theme-toggle,
+.dark .theme-toggle {
+  color: #ffe59a;
+
+  border-color: rgba(255, 255, 255, 0.12);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(38, 65, 45, 0.98),
+      rgba(13, 39, 23, 0.98)
+    );
+
+  box-shadow:
+    0 5px 16px rgba(0, 0, 0, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+[data-theme="dark"] .theme-toggle:hover,
+.dark .theme-toggle:hover {
+  color: #fff0b8;
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(49, 84, 57, 0.98),
+      rgba(18, 48, 28, 0.98)
+    );
+}
+
+[data-theme="dark"] .app-shell__menu-toggle,
+.dark .app-shell__menu-toggle {
+  color: #e9f8ed;
+
+  border-color: rgba(115, 169, 125, 0.18);
+
+  background:
+    linear-gradient(
+      145deg,
+      rgba(20, 55, 34, 0.95),
+      rgba(8, 31, 19, 0.95)
+    );
+}
+
+
+/* =========================================================
+   MOBILE NAVIGATION
+========================================================= */
+
+@media (max-width: 900px) {
+  .app-shell__header {
+    border-radius: 26px;
+
+    /*
+      Keep dropdown visible.
+    */
+    overflow: visible;
   }
 
+  .app-shell__row {
+    min-height: 88px;
+
+    padding: 12px 16px;
+  }
+
+  .app-shell__brand-icon {
+    width: 52px;
+    height: 52px;
+  }
+
+  .app-shell__brand-icon svg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .app-shell__brand-name {
+    font-size: 27px;
+  }
+
+  .app-shell__tagline {
+    font-size: 7px;
+    letter-spacing: 1.5px;
+  }
+
+  .app-shell__menu-toggle {
+    display: flex;
+
+    position: relative;
+
+    z-index: 1002;
+  }
+
+  /*
+    IMPORTANT:
+    The mobile nav is positioned below the header.
+  */
+
   .app-shell__nav {
-    display: none;
     position: absolute;
-    top: 100%;
-    left: 0;
-    right: 0;
+
+    top: calc(100% + 12px);
+
+    left: 12px;
+    right: 12px;
+
+    display: none;
+
     flex-direction: column;
-    align-items: flex-start;
-    gap: 4px;
-    background: var(--color-surface);
-    border-bottom: 1px solid var(--color-line);
-    padding: 12px clamp(16px, 5vw, 32px) 18px;
+    align-items: stretch;
+
+    gap: 8px;
+
+    padding: 14px;
+
+    border: 1px solid rgba(43, 76, 55, 0.14);
+
+    border-radius: 22px;
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.99),
+        rgba(247, 252, 248, 0.98)
+      );
+
+    box-shadow:
+      0 20px 50px rgba(22, 54, 36, 0.18),
+      0 5px 15px rgba(22, 54, 36, 0.08);
+
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+
+    z-index: 1001;
   }
 
   .app-shell__nav--open {
     display: flex;
   }
 
+  .app-shell__link {
+    width: 100%;
+
+    min-height: 50px;
+
+    justify-content: flex-start;
+
+    padding: 0 16px;
+
+    border-radius: 14px;
+  }
+
+  .app-shell__link--search {
+    justify-content: center;
+  }
+
+  /*
+    Remove the desktop search dot in mobile menu.
+  */
+
+  .app-shell__link--search::after {
+    display: none;
+  }
+
   .app-shell__nav-divider {
     width: 100%;
     height: 1px;
-    margin: 6px 0;
+
+    margin: 5px 0;
+
+    background: rgba(39, 62, 51, 0.12);
+  }
+
+  .app-shell__theme {
+    display: flex;
+
+    align-self: flex-start;
+
+    min-width: 54px;
+    min-height: 54px;
+
+    padding: 4px;
+
+    border: 1px solid rgba(47, 91, 64, 0.12);
+
+    background:
+      linear-gradient(
+        180deg,
+        rgba(255, 255, 255, 0.95),
+        rgba(246, 250, 247, 0.95)
+      );
+  }
+
+  [data-theme="dark"] .app-shell__nav,
+  .dark .app-shell__nav {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(7, 28, 18, 0.99),
+        rgba(4, 19, 12, 0.99)
+      );
+
+    border-color: rgba(100, 183, 111, 0.17);
+
+    box-shadow:
+      0 20px 55px rgba(0, 0, 0, 0.45);
+  }
+
+  [data-theme="dark"] .app-shell__nav-divider,
+  .dark .app-shell__nav-divider {
+    background: rgba(144, 177, 153, 0.15);
+  }
+
+  [data-theme="dark"] .app-shell__theme,
+  .dark .app-shell__theme {
+    background:
+      linear-gradient(
+        180deg,
+        rgba(13, 35, 24, 0.95),
+        rgba(7, 24, 16, 0.95)
+      );
+  }
+}
+
+
+/* =========================================================
+   TABLET / SMALL DESKTOP
+========================================================= */
+
+@media (max-width: 1120px) and (min-width: 901px) {
+  .app-shell__row {
+    gap: 14px;
+
+    padding-right: 18px;
+  }
+
+  .app-shell__brand-copy {
+    min-width: 155px;
+  }
+
+  .app-shell__brand-name {
+    font-size: 30px;
   }
 
   .app-shell__link {
-    padding: 8px 0;
-    width: 100%;
+    padding-left: 13px;
+    padding-right: 13px;
+
+    font-size: 14px;
+  }
+
+  .app-shell__theme {
+    min-width: 54px;
+  }
+}
+
+
+/* =========================================================
+   SMALL PHONES
+========================================================= */
+
+@media (max-width: 520px) {
+  .app-shell__header {
+    width: calc(100% - 12px);
+
+    margin-top: 6px;
+
+    border-radius: 22px;
   }
 
   .app-shell__row {
-    position: relative;
+    min-height: 78px;
+
+    padding: 10px 12px;
   }
+
+  .app-shell__brand {
+    gap: 9px;
+  }
+
+  .app-shell__brand-icon {
+    width: 46px;
+    height: 46px;
+
+    border-radius: 14px;
+  }
+
+  .app-shell__brand-icon svg {
+    width: 35px;
+    height: 35px;
+  }
+
+  .app-shell__brand-name {
+    font-size: 23px;
+
+    letter-spacing: -1px;
+  }
+
+  .app-shell__tagline {
+    margin-top: 5px;
+
+    font-size: 6px;
+
+    letter-spacing: 1.1px;
+  }
+
+  .app-shell__menu-toggle {
+    width: 42px;
+    height: 42px;
+  }
+
+  .app-shell__wave {
+    height: 35px;
+  }
+
+  .app-shell__nav {
+    left: 6px;
+    right: 6px;
+
+    padding: 12px;
+
+    border-radius: 18px;
+  }
+}
+/* =========================================================
+   AUTH FORM FIELDS
+   These fields intentionally stay LIGHT in both themes.
+   ========================================================= */
+
+.auth-form-field {
+  color: #0e1b1a !important;
+  background-color: #f8fdfd !important;
+  border-color: #cbdcda !important;
+  color-scheme: light;
+}
+
+.auth-form-field::placeholder {
+  color: #8a9c99 !important;
+}
+
+.auth-form-field:hover {
+  background-color: #ffffff !important;
+  border-color: #a9c5c2 !important;
+}
+
+.auth-form-field:focus {
+  background-color: #ffffff !important;
+  color: #0e1b1a !important;
+  border-color: #0e8a82 !important;
+}
+
+.auth-form-field:disabled {
+  background-color: #e2ebe9 !important;
+  color: #0e1b1a !important;
+}
+
+/* =========================================================
+   DARK MODE
+   DO NOT CHANGE AUTH INPUT COLORS
+   ========================================================= */
+
+[data-theme="dark"] .auth-form-field,
+.dark .auth-form-field {
+  color: #0e1b1a !important;
+  background-color: #f8fdfd !important;
+  border-color: #cbdcda !important;
+  color-scheme: light;
+}
+
+[data-theme="dark"] .auth-form-field::placeholder,
+.dark .auth-form-field::placeholder {
+  color: #8a9c99 !important;
+}
+
+[data-theme="dark"] .auth-form-field:hover,
+.dark .auth-form-field:hover {
+  background-color: #ffffff !important;
+  border-color: #a9c5c2 !important;
+}
+
+[data-theme="dark"] .auth-form-field:focus,
+.dark .auth-form-field:focus {
+  color: #0e1b1a !important;
+  background-color: #ffffff !important;
+  border-color: #0e8a82 !important;
+}
+
+/* =========================================================
+   AUTH FORM FIELDS
+   ALWAYS LIGHT - LIGHT MODE + DARK MODE
+========================================================= */
+
+.auth-form-field {
+  width: 100%;
+  height: 48px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #cbdcda;
+  border-radius: 12px;
+
+  padding: 0 16px;
+
+  background: #f8fdfd !important;
+  color: #0e1b1a !important;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  outline: none;
+
+  color-scheme: light;
+
+  box-shadow:
+    0 2px 8px rgba(14, 27, 26, 0.04);
+
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+
+/* Placeholder */
+
+.auth-form-field::placeholder {
+  color: #8a9c99 !important;
+  opacity: 1;
+}
+
+
+/* Hover */
+
+.auth-form-field:hover {
+  background: #f8fdfd !important;
+  border-color: #a9c5c2 !important;
+}
+
+
+/* Focus */
+
+.auth-form-field:focus {
+  background: #f8fdfd !important;
+  color: #0e1b1a !important;
+
+  border-color: #0e8a82 !important;
+
+  box-shadow:
+    0 0 0 4px rgba(14, 138, 130, 0.12),
+    0 4px 14px rgba(14, 138, 130, 0.08) !important;
+}
+
+
+/* Disabled */
+
+.auth-form-field:disabled {
+  background: #e2ebe9 !important;
+  color: #0e1b1a !important;
+
+  cursor: not-allowed;
+
+  opacity: 0.6;
+}
+
+
+/* =========================================================
+   DARK MODE
+   KEEP AUTH FIELDS LIGHT
+========================================================= */
+
+[data-theme="dark"] .auth-form-field,
+.dark .auth-form-field {
+  background: #f8fdfd !important;
+  color: #0e1b1a !important;
+
+  border-color: #cbdcda !important;
+
+  color-scheme: light;
+}
+
+
+[data-theme="dark"] .auth-form-field::placeholder,
+.dark .auth-form-field::placeholder {
+  color: #8a9c99 !important;
+}
+
+
+[data-theme="dark"] .auth-form-field:hover,
+.dark .auth-form-field:hover {
+  background: #f8fdfd !important;
+  border-color: #a9c5c2 !important;
+}
+
+
+[data-theme="dark"] .auth-form-field:focus,
+.dark .auth-form-field:focus {
+  background: #f8fdfd !important;
+  color: #0e1b1a !important;
+
+  border-color: #0e8a82 !important;
+
+  box-shadow:
+    0 0 0 4px rgba(14, 138, 130, 0.12),
+    0 4px 14px rgba(14, 138, 130, 0.08) !important;
+}
+
+
+[data-theme="dark"] .auth-form-field:disabled,
+.dark .auth-form-field:disabled {
+  background: #e2ebe9 !important;
+  color: #0e1b1a !important;
+}
+/* =========================================================
+   AUTH FORM INPUTS
+   ALWAYS LIGHT — EVEN WHEN WEBSITE IS DARK
+========================================================= */
+
+.auth-form-field {
+  width: 100%;
+  height: 48px;
+
+  box-sizing: border-box;
+
+  border: 1px solid #cbdcda !important;
+  border-radius: 12px;
+
+  padding: 0 16px;
+
+  background: #f8fdfd !important;
+  background-color: #f8fdfd !important;
+
+  color: #0e1b1a !important;
+
+  font-size: 14px;
+  font-weight: 500;
+
+  outline: none;
+
+  color-scheme: light;
+
+  box-shadow:
+    0 2px 8px rgba(14, 27, 26, 0.04);
+
+  transition:
+    border-color 200ms ease,
+    background-color 200ms ease,
+    box-shadow 200ms ease;
+}
+
+
+/* =========================================================
+   PLACEHOLDER
+========================================================= */
+
+.auth-form-field::placeholder {
+  color: #8a9c99 !important;
+  opacity: 1 !important;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+.auth-form-field:hover {
+  background: #f8fdfd !important;
+  background-color: #f8fdfd !important;
+
+  border-color: #a9c5c2 !important;
+}
+
+
+/* =========================================================
+   FOCUS / CLICK
+   IMPORTANT: NEVER TURN WHITE
+========================================================= */
+
+.auth-form-field:focus,
+.auth-form-field:focus-visible {
+  background: #f8fdfd !important;
+  background-color: #f8fdfd !important;
+
+  color: #0e1b1a !important;
+
+  border-color: #0e8a82 !important;
+
+  box-shadow:
+    0 0 0 4px rgba(14, 138, 130, 0.12),
+    0 4px 14px rgba(14, 138, 130, 0.08) !important;
+}
+
+
+/* =========================================================
+   DISABLED
+========================================================= */
+
+.auth-form-field:disabled {
+  background: #e2ebe9 !important;
+  background-color: #e2ebe9 !important;
+
+  color: #0e1b1a !important;
+
+  cursor: not-allowed;
+
+  opacity: 0.6;
+}
+
+
+/* =========================================================
+   DARK MODE
+   STILL LIGHT
+========================================================= */
+
+[data-theme="dark"] .auth-form-field,
+.dark .auth-form-field {
+  background: #f8fdfd !important;
+  background-color: #f8fdfd !important;
+
+  color: #0e1b1a !important;
+
+  border-color: #cbdcda !important;
+
+  color-scheme: light;
+}
+
+
+/* Dark mode + hover */
+
+[data-theme="dark"] .auth-form-field:hover,
+.dark .auth-form-field:hover {
+  background: #f8fdfd !important;
+  background-color: #f8fdfd !important;
+
+  border-color: #a9c5c2 !important;
+}
+
+
+/* Dark mode + focus */
+
+[data-theme="dark"] .auth-form-field:focus,
+[data-theme="dark"] .auth-form-field:focus-visible,
+.dark .auth-form-field:focus,
+.dark .auth-form-field:focus-visible {
+  background: #f8fdfd !important;
+  background-color: #f8fdfd !important;
+
+  color: #0e1b1a !important;
+
+  border-color: #0e8a82 !important;
+
+  box-shadow:
+    0 0 0 4px rgba(14, 138, 130, 0.12),
+    0 4px 14px rgba(14, 138, 130, 0.08) !important;
+}
+
+
+/* Dark mode + disabled */
+
+[data-theme="dark"] .auth-form-field:disabled,
+.dark .auth-form-field:disabled {
+  background: #e2ebe9 !important;
+  background-color: #e2ebe9 !important;
+
+  color: #0e1b1a !important;
 }
