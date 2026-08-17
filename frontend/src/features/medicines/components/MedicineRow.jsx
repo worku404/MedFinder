@@ -1,15 +1,26 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { PillGlyph } from "../../../components/PillGlyph";
 import { ConfirmationRail, FreshnessTag, hoursSince } from "../../search/components/FreshnessGauge";
 
 export function MedicineRow({ medicine }) {
-  const hours = hoursSince(medicine.last_confirmed_at);
+  const navigate = useNavigate();
+  const lastConfirmed = medicine.latest_confirmed_at ?? medicine.last_confirmed_at;
+  const hours = hoursSince(lastConfirmed);
+  const inStockCount = medicine.in_stock_pharmacies_count ?? medicine.stocked_at_count ?? 0;
+  const fromPrice = medicine.from_price != null ? Number(medicine.from_price) : null;
   const meta = [medicine.dosage_form_display, medicine.strength].filter(Boolean).join(" · ");
   const searchUrl = `/search?q=${encodeURIComponent(medicine.name)}`;
+  const detailUrl = `/medicines/${medicine.slug}`;
+
+  const handleStockClick = (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    navigate(searchUrl);
+  };
 
   return (
     <li className="medicine-row-wrap">
-      <Link to={searchUrl} className="medicine-row" aria-label={`Find stock for ${medicine.name}`}>
+      <Link to={detailUrl} className="medicine-row" aria-label={`View details for ${medicine.name}`}>
         <ConfirmationRail hours={hours} isStale={medicine.is_stale} />
 
         <div className="medicine-thumb">
@@ -36,7 +47,7 @@ export function MedicineRow({ medicine }) {
             </p>
           )}
           <div className="medicine-pills">
-            {medicine.last_confirmed_at && (
+            {lastConfirmed && (
               <FreshnessTag hours={hours} isStale={medicine.is_stale} />
             )}
             <span className={medicine.requires_prescription ? "tag-rx" : "tag-otc"}>
@@ -47,30 +58,40 @@ export function MedicineRow({ medicine }) {
 
         <div className="coverage-col">
           <span className="coverage-label">
-            {medicine.stocked_at_count ? `${medicine.stocked_at_count} pharmacies` : "Check stock"}
+            {inStockCount > 0
+              ? `${inStockCount} ${inStockCount === 1 ? "pharmacy" : "pharmacies"}`
+              : "Check stock"}
           </span>
           <div className="coverage-track">
             <div
-              className={`coverage-bar ${medicine.stocked_at_count && medicine.stocked_at_count <= 5 ? "coverage-bar--scarce" : ""}`}
-              style={{ width: `${Math.min(100, Math.max(20, (medicine.stocked_at_count || 1) * 10))}%` }}
+              className={`coverage-bar ${inStockCount > 0 && inStockCount <= 5 ? "coverage-bar--scarce" : ""}`}
+              style={{ width: `${Math.min(100, Math.max(20, (inStockCount || 1) * 10))}%` }}
             />
           </div>
           <span className="coverage-label">
-            {medicine.stocked_at_count && medicine.stocked_at_count <= 5 ? "hard to find" : "available"}
+            {inStockCount > 0 && inStockCount <= 5 ? "hard to find" : inStockCount > 5 ? "available" : "check stock"}
           </span>
         </div>
 
         <div className="price-col">
-          {medicine.from_price != null ? (
+          {fromPrice != null ? (
             <>
               <span className="price-prefix">from</span>
               <span className="price-val">
-                {medicine.from_price.toLocaleString()}
-                <span className="price-currency">ETB</span>
+                {fromPrice.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                <span className="price-currency"> ETB</span>
               </span>
             </>
           ) : null}
-          <span className="action-link">Stock →</span>
+          <button
+            type="button"
+            className="action-link"
+            onClick={handleStockClick}
+            style={{ background: "none", border: "none", cursor: "pointer", font: "inherit", padding: 0 }}
+            aria-label={`Find stock for ${medicine.name}`}
+          >
+            Stock →
+          </button>
         </div>
       </Link>
     </li>

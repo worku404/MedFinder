@@ -17,11 +17,8 @@ export function ChatPanel({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [text, setText] = useState("");
-  const [drafts, setDrafts] = useState([]);
   const [typing, setTyping] = useState(false);
-  const [lightbox, setLightbox] = useState(null);
 
-  const fileRef = useRef(null);
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
 
@@ -79,7 +76,6 @@ export function ChatPanel({
       };
 
       setMessages((prev) => {
-        // Prevent duplicate appending if message already exists
         if (prev.some((m) => m.id === incoming.id)) return prev;
         return [...prev, incoming];
       });
@@ -109,67 +105,19 @@ export function ChatPanel({
     }
   }, [messages, typing]);
 
-  useEffect(() => {
-    return () => {
-      drafts.forEach((d) => URL.revokeObjectURL(d.url));
-    };
-  }, [drafts]);
-
-  const addFiles = useCallback((files) => {
-    if (!files || files.length === 0) return;
-    const picked = Array.from(files)
-      .filter((f) => f.type.startsWith("image/"))
-      .slice(0, 4)
-      .map((file) => ({
-        file,
-        url: URL.createObjectURL(file),
-        id: `${file.name}-${file.lastModified}-${Math.random().toString(36).slice(2, 7)}`,
-      }));
-    setDrafts((prev) => [...prev, ...picked].slice(0, 4));
-  }, []);
-
   const handleSend = useCallback(() => {
     const body = text.trim();
-    if (!body && drafts.length === 0) return;
+    if (!body || !conversationId) return;
 
-    if (conversationId && body) {
-      const sent = sendWsMessage(body);
-      if (sent) {
-        setText("");
-        setDrafts([]);
-        return;
-      }
+    const sent = sendWsMessage(body);
+    if (sent) {
+      setText("");
     }
-
-    // Fallback send simulation if no active websocket/conversationId
-    const images = drafts.map((d) => ({
-      id: d.id,
-      url: d.url,
-      alt: `Photo sent by you: ${d.file.name}`,
-      width: 768,
-      height: 576,
-      size: d.file.size,
-    }));
-
-    const messageId = `m-${Date.now()}`;
-    const outgoing = {
-      id: messageId,
-      isMine: true,
-      author: "customer",
-      at: new Date().toISOString(),
-      status: "sent",
-      ...(body ? { text: body } : {}),
-      ...(images.length > 0 ? { images } : {}),
-    };
-
-    setMessages((prev) => [...prev, outgoing]);
-    setText("");
-    setDrafts([]);
-  }, [text, drafts, conversationId, sendWsMessage]);
+  }, [text, conversationId, sendWsMessage]);
 
   const canSend = useMemo(
-    () => text.trim().length > 0 || drafts.length > 0,
-    [text, drafts]
+    () => text.trim().length > 0 && !!conversationId && connectionStatus === "connected",
+    [text, conversationId, connectionStatus]
   );
 
   return (
@@ -193,11 +141,7 @@ export function ChatPanel({
               }}
               aria-hidden="true"
             />
-            {conversationId
-              ? connectionStatus === "connected"
-                ? "LIVE WEBSOCKET CONNECTED"
-                : "CONNECTING..."
-              : "DIRECT PHARMACY CHANNEL"}
+            {connectionStatus === "connected" ? "LIVE WEBSOCKET CONNECTED" : "CONNECTING..."}
           </p>
         </div>
 
@@ -227,43 +171,39 @@ export function ChatPanel({
         )}
       </header>
 
-      {/* Message Stream */}
-      <div ref={scrollRef} className="chat-panel__body" aria-live="polite">
-        {loading && <p className="chat-panel__watermark">Loading messages…</p>}
-        {error && <p className="chat-panel__watermark" style={{ color: "var(--color-caution)" }}>{error}</p>}
+      {/* Messages Scroll Area */}
+      <div ref={scrollRef} className="chat-panel__messages">
+        {loading && <p className="chat-panel__empty">Loading past messages…</p>}
+        {error && <p className="chat-panel__empty" style={{ color: "var(--color-caution)" }}>{error}</p>}
 
         {!loading && messages.length === 0 && (
-          <div className="chat-empty-state">
-            <svg
-              className="chat-empty-state__icon"
-              width="36"
-              height="36"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.75"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-            </svg>
-            <p className="chat-empty-state__title">Consult directly with the pharmacist</p>
-            <p className="chat-empty-state__subtitle">
-              Ask about current stock, verify dosage, or attach a photo of your prescription.
+          <div className="chat-panel__empty-state">
+            <div className="chat-panel__empty-icon" aria-hidden="true">
+              <svg
+                width="36"
+                height="36"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              </svg>
+            </div>
+            <p className="chat-panel__empty-title">Consult directly with the pharmacist</p>
+            <p className="chat-panel__empty-desc">
+              Ask about current stock, verify dosage, or check pricing.
             </p>
           </div>
         )}
 
         {messages.map((m) => (
-          <ChatMessageBubble
-            key={m.id}
-            message={m}
-            onOpenImage={(url, alt) => setLightbox({ url, alt })}
-          />
+          <ChatMessageBubble key={m.id} message={m} />
         ))}
 
-        {typing && <TypingBubble name={pharmacyName} />}
+        {typing && <TypingBubble />}
       </div>
 
       {/* Quick Replies Carousel */}
@@ -289,85 +229,9 @@ export function ChatPanel({
           e.preventDefault();
           handleSend();
         }}
-        onDragOver={(e) => e.preventDefault()}
-        onDrop={(e) => {
-          e.preventDefault();
-          addFiles(e.dataTransfer.files);
-        }}
         className="chat-panel__footer"
       >
-        {/* Draft Image Preview Staging */}
-        {drafts.length > 0 && (
-          <ul className="chat-drafts-list">
-            {drafts.map((d) => (
-              <li key={d.id} className="chat-draft-item">
-                <img
-                  src={d.url}
-                  alt={`Attached ${d.file.name}`}
-                  className="chat-draft-item__thumb"
-                />
-                <button
-                  type="button"
-                  onClick={() => setDrafts((list) => list.filter((x) => x.id !== d.id))}
-                  aria-label={`Remove ${d.file.name}`}
-                  className="chat-draft-item__remove"
-                >
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="3"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  >
-                    <line x1="18" y1="6" x2="6" y2="18" />
-                    <line x1="6" y1="6" x2="18" y2="18" />
-                  </svg>
-                </button>
-              </li>
-            ))}
-          </ul>
-        )}
-
         <div className="chat-input-row">
-          <input
-            ref={fileRef}
-            type="file"
-            accept="image/*"
-            multiple
-            className="chat-sr-only"
-            onChange={(e) => {
-              addFiles(e.target.files);
-              e.target.value = "";
-            }}
-          />
-
-          <button
-            type="button"
-            onClick={() => fileRef.current?.click()}
-            aria-label="Attach a photo of the prescription or medicine box"
-            className="chat-attach-btn"
-            title="Attach a photo"
-          >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <polyline points="21 15 16 10 5 21" />
-            </svg>
-          </button>
-
           <label htmlFor="chat-message-input" className="chat-sr-only">
             Type your question
           </label>
@@ -383,7 +247,7 @@ export function ChatPanel({
                 handleSend();
               }
             }}
-            placeholder="Type your question, or attach a photo…"
+            placeholder="Type your question to the pharmacist…"
             className="chat-textarea"
           />
 
@@ -412,26 +276,9 @@ export function ChatPanel({
         </div>
 
         <p className="chat-footer-hint">
-          ENTER SENDS · SHIFT+ENTER NEW LINE · JPG/PNG UP TO 4 PHOTOS
+          ENTER SENDS · SHIFT+ENTER NEW LINE
         </p>
       </form>
-
-      {/* Lightbox Full-Screen Photo Modal */}
-      {lightbox && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Photo preview"
-          onClick={() => setLightbox(null)}
-          className="chat-lightbox-backdrop"
-        >
-          <img
-            src={lightbox.url}
-            alt={lightbox.alt || "Photo preview"}
-            className="chat-lightbox-img"
-          />
-        </div>
-      )}
     </div>
   );
 }
