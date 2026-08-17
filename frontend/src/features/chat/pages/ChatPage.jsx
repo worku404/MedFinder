@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import { Navigate, useNavigate, useSearchParams } from "react-router-dom";
 import { chatApi } from "../api";
 import { ChatPanel } from "../components/ChatPanel";
 import "../chat.css";
@@ -30,6 +30,10 @@ export function ChatPage() {
       });
   }, [pharmacyId]);
 
+  if (!pharmacyId) {
+    return <Navigate to="/search" replace />;
+  }
+
   const handleClose = () => {
     if (window.history.length > 2) {
       navigate(-1);
@@ -46,8 +50,7 @@ export function ChatPage() {
           <span className="chat-page-hero__title-muted">before you travel</span>
         </h1>
         <p className="chat-page-hero__subtitle">
-          Send a photo of the box or the prescription — the pharmacist answers with the
-          count from their own shelf.
+          Send your inquiry directly to the pharmacy team for real-time stock and price confirmation.
         </p>
       </section>
 

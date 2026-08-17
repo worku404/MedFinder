@@ -112,7 +112,7 @@ export function SearchResultDetailModal({ result, onClose }) {
             Directions & Profile
           </Link>
           <Link
-            to={`/chat?pharmacy=${encodeURIComponent(result.pharmacy.name)}&branch=${encodeURIComponent(result.pharmacy.address || "Main Branch")}&medicine=${encodeURIComponent(result.medicine.name)}`}
+            to={`/chat?pharmacy_id=${result.pharmacy.id}&pharmacy=${encodeURIComponent(result.pharmacy.name)}&branch=${encodeURIComponent(result.pharmacy.address || "Main Branch")}&medicine=${encodeURIComponent(result.medicine.name)}`}
             className="detail-sheet__btn detail-sheet__btn--secondary"
             onClick={onClose}
           >
