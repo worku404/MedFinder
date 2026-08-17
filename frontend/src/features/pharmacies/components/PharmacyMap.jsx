@@ -28,7 +28,7 @@ function ClickToPlace({ onPlace }) {
   return null;
 }
 
-export function PharmacyMap({ latitude, longitude, onChange = () => {}, readOnly = false }) {
+export function PharmacyMap({ latitude, longitude, onChange = () => {} }) {
   const position = useMemo(() => {
     if (typeof latitude === "number" && typeof longitude === "number") {
       return { lat: latitude, lng: longitude };
@@ -55,20 +55,18 @@ export function PharmacyMap({ latitude, longitude, onChange = () => {}, readOnly
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {!readOnly && <ClickToPlace onPlace={handlePlace} />}
+        <ClickToPlace onPlace={handlePlace} />
         {position && (
           <Marker
             position={position}
-            draggable={!readOnly}
-            eventHandlers={!readOnly ? { dragend: (e) => handlePlace(e.target.getLatLng()) } : undefined}
+            draggable
+            eventHandlers={{ dragend: (e) => handlePlace(e.target.getLatLng()) }}
           />
         )}
       </MapContainer>
-      {!readOnly && (
-        <p className="pharmacy-map__hint">
-          Tap the map to drop a pin at your pharmacy, or drag the pin to fine-tune it.
-        </p>
-      )}
+      <p className="pharmacy-map__hint">
+        Tap the map to drop a pin at your pharmacy, or drag the pin to fine-tune it.
+      </p>
     </div>
   );
 }

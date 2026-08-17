@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db.models import Q
 from rest_framework import status, viewsets
 from rest_framework.decorators import action
@@ -14,6 +15,11 @@ from .serializers import (
     PharmacyOwnerSerializer,
     PharmacyPublicSerializer,
     PharmacyStaffSerializer,
+)
+from .services import (
+    apply_to_pharmacy_with_invite,
+    update_pharmacy_staff_status,
+    create_and_send_pharmacy_invite
 )
 
 
@@ -73,45 +79,33 @@ class PharmacyViewSet(viewsets.ModelViewSet):
         serializer = PharmacyStaffSerializer(staff_members, many=True)
         return Response(serializer.data)
 
+    def _handle_staff_status_change(self, request, new_status: PharmacyStaff.Status):
+        staff_id = request.data.get("staff_id")
+        if not staff_id:
+            return Response({"detail": "staff_id is required."}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            staff = update_pharmacy_staff_status(
+                pharmacy=self.get_object(),
+                staff_id=staff_id,
+                reviewer=request.user,
+                new_status=new_status,
+            )
+            return Response(PharmacyStaffSerializer(staff).data)
+        except PharmacyStaff.DoesNotExist:
+            return Response(
+                {"detail": "Staff member not found for this pharmacy."},
+                status=status.HTTP_404_NOT_FOUND,
+            )
+
     @action(detail=True, methods=["post"])
     def approve_staff(self, request, pk=None):
         """Approve a pending staff application for this pharmacy."""
-        pharmacy = self.get_object()
-        staff_id = request.data.get("staff_id")
-        if not staff_id:
-            return Response({"detail": "staff_id is required."}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            staff = pharmacy.staff_memberships.get(id=staff_id)
-        except PharmacyStaff.DoesNotExist:
-            return Response(
-                {"detail": "Staff member not found for this pharmacy."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        staff.status = PharmacyStaff.Status.APPROVED
-        staff.reviewed_by = request.user
-        staff.save(update_fields=["status", "reviewed_by", "updated"])
-        return Response(PharmacyStaffSerializer(staff).data)
+        return self._handle_staff_status_change(request, PharmacyStaff.Status.APPROVED)
 
     @action(detail=True, methods=["post"])
     def reject_staff(self, request, pk=None):
-        """Reject a staff application for this pharmacy."""
-        pharmacy = self.get_object()
-        staff_id = request.data.get("staff_id")
-        if not staff_id:
-            return Response({"detail": "staff_id is required."}, status=status.HTTP_400_BAD_REQUEST)
-        try:
-            staff = pharmacy.staff_memberships.get(id=staff_id)
-        except PharmacyStaff.DoesNotExist:
-            return Response(
-                {"detail": "Staff member not found for this pharmacy."},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-
-        staff.status = PharmacyStaff.Status.REJECTED
-        staff.reviewed_by = request.user
-        staff.save(update_fields=["status", "reviewed_by", "updated"])
-        return Response(PharmacyStaffSerializer(staff).data)
+        """Reject or revoke a staff application for this pharmacy."""
+        return self._handle_staff_status_change(request, PharmacyStaff.Status.REJECTED)
 
     @action(detail=True, methods=["get", "post"])
     def invites(self, request, pk=None):
@@ -123,8 +117,13 @@ class PharmacyViewSet(viewsets.ModelViewSet):
                 context={"request": request, "pharmacy": pharmacy},
             )
             serializer.is_valid(raise_exception=True)
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            invite = create_and_send_pharmacy_invite(
+                pharmacy=pharmacy,
+                created_by=request.user,
+                recipient_email=serializer.validated_data.get("recipient_email", ""),
+                max_uses=serializer.validated_data.get("max_uses", 1),
+            )
+            return Response(PharmacyInviteSerializer(invite).data, status=status.HTTP_201_CREATED)
 
         invites = pharmacy.invites.order_by("-created")
         serializer = PharmacyInviteSerializer(invites, many=True)
@@ -150,40 +149,16 @@ class PharmacyJoinView(APIView):
         serializer.is_valid(raise_exception=True)
         invite = serializer.validated_data["invite_code"]
 
-        # Prevent owner from applying as staff to their own pharmacy
-        if invite.pharmacy.owner_id == request.user.id:
+        try:
+            staff = apply_to_pharmacy_with_invite(
+                user=request.user,
+                invite=invite,
+            )
+        except ValidationError as e:
             return Response(
-                {"detail": "You are already the owner of this pharmacy."},
+                {"detail": e.message if hasattr(e, "message") else str(e)},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-
-        # Check existing staff membership
-        staff, created = PharmacyStaff.objects.get_or_create(
-            pharmacy=invite.pharmacy,
-            pharmacist=request.user,
-            defaults={"status": PharmacyStaff.Status.PENDING},
-        )
-
-        if not created:
-            if staff.status == PharmacyStaff.Status.APPROVED:
-                return Response(
-                    {"detail": "You are already an approved staff member of this pharmacy."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            elif staff.status == PharmacyStaff.Status.PENDING:
-                return Response(
-                    {"detail": "Your membership request for this pharmacy is already pending owner approval."},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
-            else:
-                # If previously rejected, re-apply as pending
-                staff.status = PharmacyStaff.Status.PENDING
-                staff.reviewed_by = None
-                staff.save(update_fields=["status", "reviewed_by", "updated"])
-
-        # Increment invite use count
-        invite.use_count += 1
-        invite.save(update_fields=["use_count"])
 
         return Response(
             PharmacyStaffSerializer(staff).data,

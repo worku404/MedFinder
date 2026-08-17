@@ -17,6 +17,11 @@ class MedicineSerializer(serializers.ModelSerializer):
         source="get_dosage_form_display", read_only=True,
     )
     thumbnail = serializers.SerializerMethodField()
+    in_stock_pharmacies_count = serializers.IntegerField(read_only=True, default=0)
+    from_price = serializers.DecimalField(
+        max_digits=10, decimal_places=2, read_only=True, allow_null=True, default=None
+    )
+    latest_confirmed_at = serializers.DateTimeField(read_only=True, allow_null=True, default=None)
 
     class Meta:
         model = Medicine
@@ -33,6 +38,9 @@ class MedicineSerializer(serializers.ModelSerializer):
             "strength",
             "description",
             "requires_prescription",
+            "in_stock_pharmacies_count",
+            "from_price",
+            "latest_confirmed_at",
             "is_active",
         ]
 

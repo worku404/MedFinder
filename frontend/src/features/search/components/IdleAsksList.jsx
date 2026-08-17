@@ -1,40 +1,46 @@
-import { confirmedLabel } from "./FreshnessGauge";
+import { confirmedLabel, hoursSince } from "./FreshnessGauge";
 
-export const DEFAULT_ASKED_TODAY = [
-  { name: "Amoxicillin 500mg", asks: 412, confirmedHoursAgo: 6 },
-  { name: "Insulin glargine", asks: 233, confirmedHoursAgo: 19 },
-  { name: "Salbutamol inhaler", asks: 188, confirmedHoursAgo: 2 },
-  { name: "Metformin 850mg", asks: 164, confirmedHoursAgo: 11 },
-  { name: "Ceftriaxone 1g", asks: 97, confirmedHoursAgo: 48 },
-];
+export function IdleAsksList({ onPick, medicines = [] }) {
+  if (!medicines || medicines.length === 0) {
+    return null;
+  }
 
-export function IdleAsksList({ onPick, items = DEFAULT_ASKED_TODAY }) {
   return (
     <div className="idle-panel">
       <div className="idle-panel__heading">
-        <h2>Asked for most in the last 24 hours</h2>
+        <h2>Available in verified pharmacies today</h2>
       </div>
 
       <ul className="idle-panel__list">
-        {items.map((m) => (
-          <li key={m.name}>
-            <button
-              type="button"
-              onClick={() => onPick(m.name)}
-              className="idle-panel__item"
-            >
-              <div className="idle-panel__item-info">
-                <span className="idle-panel__item-name">{m.name}</span>
-                <span className="idle-panel__item-confirmed">
-                  last confirmed {confirmedLabel(m.confirmedHoursAgo)}
+        {medicines.map((m) => {
+          const hours = hoursSince(m.latest_confirmed_at);
+          const fullName = [m.name, m.strength].filter(Boolean).join(" ");
+          const pharmacyCount = m.in_stock_pharmacies_count ?? 0;
+
+          return (
+            <li key={m.id || m.name}>
+              <button
+                type="button"
+                onClick={() => onPick(m.name)}
+                className="idle-panel__item"
+              >
+                <div className="idle-panel__item-info">
+                  <span className="idle-panel__item-name">{fullName}</span>
+                  <span className="idle-panel__item-confirmed">
+                    {m.latest_confirmed_at
+                      ? `last confirmed ${confirmedLabel(hours)}`
+                      : "Verified canonical medicine"}
+                  </span>
+                </div>
+                <span className="idle-panel__item-asks tabular">
+                  {pharmacyCount > 0
+                    ? `In ${pharmacyCount} ${pharmacyCount === 1 ? "pharmacy" : "pharmacies"}`
+                    : "Catalog item"}
                 </span>
-              </div>
-              <span className="idle-panel__item-asks tabular">
-                {m.asks} asks
-              </span>
-            </button>
-          </li>
-        ))}
+              </button>
+            </li>
+          );
+        })}
       </ul>
 
       <p className="idle-panel__footer-hint">
