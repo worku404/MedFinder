@@ -52,17 +52,48 @@ export function PharmacyStaffPage() {
     }
   };
 
-  const handleCreateInvite = async () => {
-    setCreatingInvite(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [recipientEmail, setRecipientEmail] = useState("");
+  const [generatedInvite, setGeneratedInvite] = useState(null);
+  const [modalSubmitting, setModalSubmitting] = useState(false);
+  const [modalError, setModalError] = useState(null);
+  const [modalCopied, setModalCopied] = useState(false);
+
+  const openInviteModal = () => {
+    setRecipientEmail("");
+    setGeneratedInvite(null);
+    setModalError(null);
+    setModalCopied(false);
+    setIsModalOpen(true);
+  };
+
+  const closeInviteModal = () => {
+    setIsModalOpen(false);
+    setGeneratedInvite(null);
+    setModalError(null);
+  };
+
+  const handleModalSubmit = async (e) => {
+    e.preventDefault();
+    setModalSubmitting(true);
+    setModalError(null);
     try {
-      await pharmaciesApi.createInvite(pharmacyId, {});
-      setStatus((s) => ({ ...s, actionMsg: "New invite link generated!" }));
+      const payload = recipientEmail.trim() ? { recipient_email: recipientEmail.trim() } : {};
+      const newInvite = await pharmaciesApi.createInvite(pharmacyId, payload);
+      setGeneratedInvite(newInvite);
       loadData();
     } catch (err) {
-      setStatus((s) => ({ ...s, error: err.message }));
+      setModalError(err.message || "Failed to generate invite.");
     } finally {
-      setCreatingInvite(false);
+      setModalSubmitting(false);
     }
+  };
+
+  const copyModalLink = (code) => {
+    const shareUrl = `${window.location.origin}/pharmacies/join?code=${code}`;
+    navigator.clipboard.writeText(shareUrl);
+    setModalCopied(true);
+    setTimeout(() => setModalCopied(false), 2500);
   };
 
   const copyToClipboard = (code) => {
@@ -88,10 +119,10 @@ export function PharmacyStaffPage() {
         <button
           type="button"
           className="btn btn--primary"
-          onClick={handleCreateInvite}
-          disabled={creatingInvite || status.loading}
+          onClick={openInviteModal}
+          disabled={status.loading}
         >
-          {creatingInvite ? "Generating…" : "+ Generate Invite Link"}
+          + Generate Invite Link
         </button>
       </header>
 
@@ -241,6 +272,174 @@ export function PharmacyStaffPage() {
           </div>
         )}
       </section>
+
+      {/* Generate Invite Modal Dialog */}
+      {isModalOpen && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(0, 0, 0, 0.75)",
+            backdropFilter: "blur(4px)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000,
+            padding: "1rem",
+          }}
+          onClick={closeInviteModal}
+        >
+          <div
+            style={{
+              background: "var(--color-bg-panel, #161e2e)",
+              border: "1px solid var(--color-line, rgba(255, 255, 255, 0.12))",
+              borderRadius: "var(--radius-md, 12px)",
+              maxWidth: "500px",
+              width: "100%",
+              padding: "1.75rem",
+              boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.7)",
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "1rem" }}>
+              <h2 style={{ fontSize: "1.25rem", margin: 0, fontWeight: 600 }}>
+                {generatedInvite ? "Invitation Created" : "Invite Staff Pharmacist"}
+              </h2>
+              <button
+                type="button"
+                className="btn btn--ghost"
+                style={{ padding: "0.2rem 0.5rem", fontSize: "1.2rem", lineHeight: 1 }}
+                onClick={closeInviteModal}
+                aria-label="Close"
+              >
+                ✕
+              </button>
+            </div>
+
+            {modalError && (
+              <div style={{ marginBottom: "1rem" }}>
+                <StatusBanner tone="error">{modalError}</StatusBanner>
+              </div>
+            )}
+
+            {!generatedInvite ? (
+              <form onSubmit={handleModalSubmit}>
+                <p className="auth-fineprint" style={{ marginBottom: "1.25rem", lineHeight: 1.5 }}>
+                  Enter the pharmacist's email address to automatically dispatch an email invitation,
+                  or leave blank to simply generate a sharable join link.
+                </p>
+
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label
+                    htmlFor="recipient-email-input"
+                    style={{ display: "block", fontSize: "0.875rem", fontWeight: 500, marginBottom: "0.5rem" }}
+                  >
+                    Recipient Email <span style={{ color: "var(--color-ink-soft)" }}>(Optional)</span>
+                  </label>
+                  <input
+                    id="recipient-email-input"
+                    type="email"
+                    className="input"
+                    placeholder="e.g. pharmacist@example.com"
+                    value={recipientEmail}
+                    onChange={(e) => setRecipientEmail(e.target.value)}
+                    autoFocus
+                    style={{
+                      width: "100%",
+                      padding: "0.65rem 0.85rem",
+                      borderRadius: "var(--radius-sm, 6px)",
+                      border: "1px solid var(--color-line, rgba(255, 255, 255, 0.15))",
+                      background: "var(--color-bg-subtle, rgba(255, 255, 255, 0.05))",
+                      color: "inherit",
+                    }}
+                  />
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "flex-end", gap: "0.75rem" }}>
+                  <button
+                    type="button"
+                    className="btn btn--ghost"
+                    onClick={closeInviteModal}
+                    disabled={modalSubmitting}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    className="btn btn--primary"
+                    disabled={modalSubmitting}
+                  >
+                    {modalSubmitting
+                      ? "Generating…"
+                      : recipientEmail.trim()
+                      ? "Generate & Send Email"
+                      : "Generate Join Link"}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <div>
+                <div
+                  style={{
+                    padding: "0.75rem 1rem",
+                    borderRadius: "var(--radius-sm, 6px)",
+                    background: "rgba(74, 222, 128, 0.1)",
+                    border: "1px solid rgba(74, 222, 128, 0.3)",
+                    color: "var(--color-verified, #4ade80)",
+                    fontSize: "0.9rem",
+                    marginBottom: "1.25rem",
+                  }}
+                >
+                  {recipientEmail.trim()
+                    ? `✓ Invitation created! Email sent to ${recipientEmail.trim()}`
+                    : "✓ Invitation link generated successfully!"}
+                </div>
+
+                <div style={{ marginBottom: "1.5rem" }}>
+                  <label style={{ display: "block", fontSize: "0.85rem", color: "var(--color-ink-soft)", marginBottom: "0.4rem" }}>
+                    Invite Code & Link
+                  </label>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      padding: "0.5rem 0.75rem",
+                      background: "var(--color-bg-subtle, rgba(255, 255, 255, 0.04))",
+                      border: "1px solid var(--color-line, rgba(255, 255, 255, 0.1))",
+                      borderRadius: "var(--radius-sm, 6px)",
+                    }}
+                  >
+                    <code style={{ fontSize: "0.9rem", flex: 1, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                      {`${window.location.origin}/pharmacies/join?code=${generatedInvite.code}`}
+                    </code>
+                    <button
+                      type="button"
+                      className="btn btn--google"
+                      style={{ width: "auto", fontSize: "0.85rem", padding: "0.35rem 0.75rem", whiteSpace: "nowrap" }}
+                      onClick={() => copyModalLink(generatedInvite.code)}
+                    >
+                      {modalCopied ? "✓ Copied!" : "Copy Link"}
+                    </button>
+                  </div>
+                </div>
+
+                <div style={{ display: "flex", justifyContent: "flex-end" }}>
+                  <button
+                    type="button"
+                    className="btn btn--primary"
+                    onClick={closeInviteModal}
+                  >
+                    Done
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
