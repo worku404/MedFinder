@@ -29,7 +29,6 @@ class Category(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        # Auto-generate slug from name if not manually provided
         if not self.slug and self.name:
             self.slug = slugify(self.name)
         super().save(*args, **kwargs)
@@ -72,13 +71,11 @@ class Medicine(models.Model):
         upload_to='medicine_images/',
         blank=True,
         null=True,
-        help_text="Uploaded packaging image",
     )
     image_url = models.URLField(
         max_length=500,
         blank=True,
         null=True,
-        help_text="Optional external image link (e.g. CDN or catalog URL)",
     )
     strength = models.CharField(
         max_length=50,
@@ -87,12 +84,10 @@ class Medicine(models.Model):
     )
     description = models.TextField(
         blank=True,
-        help_text="Notes and common brand names for search coverage",
     )
     requires_prescription = models.BooleanField(default=True)
     is_active = models.BooleanField(
         default=True,
-        help_text="Inactive medicines are hidden from public search",
     )
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)

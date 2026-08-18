@@ -2,7 +2,6 @@ import { useCallback, useState } from "react";
 import { Search, Pill, User, LogIn, Menu, X } from "lucide-react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import { ChatModal } from "../features/chat/components/ChatModal";
 import { useNotificationSocket } from "../features/notifications/useNotificationSocket";
 import { NotificationToast } from "./NotificationToast";
 import { ThemeToggle } from "./ThemeToggle";
@@ -14,7 +13,6 @@ export function AppShell() {
 
   const [menuOpen, setMenuOpen] = useState(false);
   const [toasts, setToasts] = useState([]);
-  const [activeChat, setActiveChat] = useState(null);
 
   const handleNotification = useCallback((notification) => {
     setToasts((prev) => [
@@ -268,15 +266,6 @@ export function AppShell() {
         onDismiss={handleDismissToast}
         onAction={handleToastAction}
       />
-
-      {/* Global Patient Chat Modal on Toast Action */}
-      {activeChat && (
-        <ChatModal
-          conversationId={activeChat.conversationId}
-          pharmacyName={activeChat.pharmacyName}
-          onClose={() => setActiveChat(null)}
-        />
-      )}
 
       <Outlet />
     </div>

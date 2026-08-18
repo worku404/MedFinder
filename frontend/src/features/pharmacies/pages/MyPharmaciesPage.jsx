@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { cursorFromUrl, pharmaciesApi } from "../api";
+import { cursorFromUrl } from "../../../lib/pagination";
+import { pharmaciesApi } from "../api";
 import { PharmacistPortalHeader } from "../components/PharmacistPortalHeader";
 import { StoreKpiSummary } from "../components/StoreKpiSummary";
 import { StoreCard } from "../components/StoreCard";
