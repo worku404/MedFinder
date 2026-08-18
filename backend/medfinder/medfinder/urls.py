@@ -42,6 +42,7 @@ urlpatterns = [
     path('api/search/', include('search.urls')),
     path('api/inventory/', include('inventory.urls')),
     path('api/', include('notifications.urls')),
+    path('api/payments/', include('payments.urls')),
     # Spectacular Open API
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),

@@ -94,6 +94,7 @@ INSTALLED_APPS = [
     'inventory',
     'search',
     "notifications",
+    'payments',
 ]
 
 # Required by django-allauth — refers to the django.contrib.sites Site
@@ -366,6 +367,17 @@ STATIC_ROOT = BASE_DIR / 'staticfiles'
 # ═══════════════════════════════════════════════════════════════════
 # MEDIA FILES (User Uploads & Medicine Images)
 # ═══════════════════════════════════════════════════════════════════
+
+# ═══════════════════════════════════════════════════════════════════
+# PAYMENTS (Chapa — Model A split payment)
+# ═══════════════════════════════════════════════════════════════════
+
+CHAPA_SECRET_KEY = config("CHAPA_SECRET_KEY", default=None)
+CHAPA_WEBHOOK_SECRET = config("CHAPA_WEBHOOK_SECRET", default=None)
+CHAPA_BASE_URL = "https://api.chapa.co/v1"
+# Public base URL of THIS backend, used by Chapa to reach the webhook.
+PUBLIC_BASE_URL = config("PUBLIC_BASE_URL", default="http://127.0.0.1:8000")
+
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'

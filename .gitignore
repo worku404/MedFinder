@@ -219,3 +219,8 @@ __marimo__/
 backend/medfinder/media/
 backend/medfinder/scratch/
 *.md
+
+presentation
+postman
+c4
+.postman
