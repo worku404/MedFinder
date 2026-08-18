@@ -33,6 +33,7 @@ export function AccountSettingsPage() {
   });
   const [pwStatus, setPwStatus] = useState("idle");
   const [pwError, setPwError] = useState(null);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   if (!user) return null;
 
@@ -54,15 +55,25 @@ export function AccountSettingsPage() {
   const changePassword = async (e) => {
     e.preventDefault();
     setPwError(null);
+
     if (pwForm.new_password1 !== pwForm.new_password2) {
       setPwError("Passwords don't match.");
       return;
     }
+
     setPwStatus("saving");
+
     try {
       await accountsApi.passwordChange(pwForm);
+
       setPwStatus("saved");
-      setPwForm({ new_password1: "", new_password2: "" });
+
+      setPwForm({
+        new_password1: "",
+        new_password2: "",
+      });
+
+      setShowPasswordForm(false);
     } catch (err) {
       setPwStatus("idle");
       setPwError(
