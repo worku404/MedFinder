@@ -33,6 +33,7 @@ export function AccountSettingsPage() {
   });
   const [pwStatus, setPwStatus] = useState("idle");
   const [pwError, setPwError] = useState(null);
+  const [showPasswordForm, setShowPasswordForm] = useState(false);
 
   if (!user) return null;
 
@@ -54,15 +55,25 @@ export function AccountSettingsPage() {
   const changePassword = async (e) => {
     e.preventDefault();
     setPwError(null);
+
     if (pwForm.new_password1 !== pwForm.new_password2) {
       setPwError("Passwords don't match.");
       return;
     }
+
     setPwStatus("saving");
+
     try {
       await accountsApi.passwordChange(pwForm);
+
       setPwStatus("saved");
-      setPwForm({ new_password1: "", new_password2: "" });
+
+      setPwForm({
+        new_password1: "",
+        new_password2: "",
+      });
+
+      setShowPasswordForm(false);
     } catch (err) {
       setPwStatus("idle");
       setPwError(
@@ -145,39 +156,90 @@ export function AccountSettingsPage() {
 
       <section className="settings-card">
         <h2 className="settings-card__title">Password</h2>
-        {pwError && <StatusBanner tone="error">{pwError}</StatusBanner>}
-        {pwStatus === "saved" && (
-          <StatusBanner tone="info">Password updated.</StatusBanner>
+
+        {!showPasswordForm ? (
+          <>
+            <p className="settings-card__description">
+              Change your account password to keep your account secure.
+            </p>
+
+            <button
+              className="btn btn--primary mt-4"
+              type="button"
+              onClick={() => {
+                setShowPasswordForm(true);
+                setPwError(null);
+                setPwStatus("idle");
+              }}
+            >
+              Update Password
+            </button>
+          </>
+        ) : (
+          <>
+            {pwError && <StatusBanner tone="error">{pwError}</StatusBanner>}
+
+            {pwStatus === "saved" && (
+              <StatusBanner tone="info">Password updated.</StatusBanner>
+            )}
+
+            <form onSubmit={changePassword} noValidate>
+              <FormField
+                id="new_password1"
+                label="New password"
+                type="password"
+                autoComplete="new-password"
+                value={pwForm.new_password1}
+                onChange={(e) =>
+                  setPwForm({
+                    ...pwForm,
+                    new_password1: e.target.value,
+                  })
+                }
+              />
+
+              <FormField
+                id="new_password2"
+                label="Confirm new password"
+                type="password"
+                autoComplete="new-password"
+                value={pwForm.new_password2}
+                onChange={(e) =>
+                  setPwForm({
+                    ...pwForm,
+                    new_password2: e.target.value,
+                  })
+                }
+              />
+
+              <div className="settings-actions">
+                <button
+                  className="btn btn--primary mt-4"
+                  type="submit"
+                  disabled={pwStatus === "saving"}
+                >
+                  {pwStatus === "saving" ? "Updating…" : "Update password"}
+                </button>
+
+                <button
+                  className="btn btn--ghost mt-4"
+                  type="button"
+                  onClick={() => {
+                    setShowPasswordForm(false);
+                    setPwForm({
+                      new_password1: "",
+                      new_password2: "",
+                    });
+                    setPwError(null);
+                    setPwStatus("idle");
+                  }}
+                >
+                  Cancel
+                </button>
+              </div>
+            </form>
+          </>
         )}
-        <form onSubmit={changePassword} noValidate>
-          <FormField
-            id="new_password1"
-            label="New password"
-            type="password"
-            autoComplete="new-password"
-            value={pwForm.new_password1}
-            onChange={(e) =>
-              setPwForm({ ...pwForm, new_password1: e.target.value })
-            }
-          />
-          <FormField
-            id="new_password2"
-            label="Confirm new password"
-            type="password"
-            autoComplete="new-password"
-            value={pwForm.new_password2}
-            onChange={(e) =>
-              setPwForm({ ...pwForm, new_password2: e.target.value })
-            }
-          />
-          <button
-            className="btn btn--primary mt-4"
-            type="submit"
-            disabled={pwStatus === "saving"}
-          >
-            {pwStatus === "saving" ? "Updating…" : "Update password"}
-          </button>
-        </form>
       </section>
     </div>
   );
