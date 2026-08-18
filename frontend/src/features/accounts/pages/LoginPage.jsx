@@ -11,12 +11,7 @@ export function LoginPage() {
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [form, setForm] = useState({
-    email: location.state?.email || "",
-    password: "",
-  });
-
+  const [form, setForm] = useState({ email: location.state?.email || "", password: "" });
   const [error, setError] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -25,19 +20,13 @@ export function LoginPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     setError(null);
     setSubmitting(true);
-
     try {
       await login(form.email, form.password);
       navigate(from, { replace: true });
     } catch (err) {
-      setError(
-        err instanceof ApiError
-          ? err.message
-          : "Something went wrong. Please try again.",
-      );
+      setError(err instanceof ApiError ? err.message : "Something went wrong. Try again.");
     } finally {
       setSubmitting(false);
     }
@@ -45,15 +34,10 @@ export function LoginPage() {
 
   return (
     <AuthLayout
-      eyebrow="Trusted Pharmacy Network"
-      title={
-        <>
-          Find the medicine you need.
-          <span className="text-[#0e8a82]"> Before you drive there.</span>
-        </>
-      }
-      subtitle="Check real-time medicine availability at verified pharmacies near you."
-      panelNote="Every pharmacy listing is verified by a pharmacist and regularly updated, helping you find available medicines with confidence."
+      eyebrow="Sign in"
+      title="Find it before you drive there"
+      subtitle="Check live stock across registered pharmacies near you."
+      panelNote="Every listing here is confirmed by a real pharmacist, and flagged the moment it goes stale."
     >
       {/* =====================================================
           FIXED LIGHT LOGIN FORM

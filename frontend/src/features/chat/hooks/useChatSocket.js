@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { tokenStore } from "../../../lib/apiClient";
 
 export function useChatSocket(conversationId, onMessageReceived) {
-  const [connectionStatus, setConnectionStatus] = useState("disconnected");
   const socketRef = useRef(null);
+  const [connectionStatus, setConnectionStatus] = useState("disconnected");
   const onMessageRef = useRef(onMessageReceived);
 
   useEffect(() => {
@@ -11,17 +11,19 @@ export function useChatSocket(conversationId, onMessageReceived) {
   }, [onMessageReceived]);
 
   useEffect(() => {
-    if (!conversationId) return;
+    if (!conversationId) {
+      setConnectionStatus("disconnected");
+      return;
+    }
 
     const token = tokenStore.getAccess();
     if (!token) {
-      setConnectionStatus("unauthenticated");
+      setConnectionStatus("disconnected");
       return;
     }
 
     const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
     const host = window.location.host;
-    // In dev Vite proxy forwards /ws to Daphne backend
     const wsUrl = `${protocol}//${host}/ws/chat/${conversationId}/?token=${encodeURIComponent(token)}`;
 
     setConnectionStatus("connecting");
@@ -35,38 +37,35 @@ export function useChatSocket(conversationId, onMessageReceived) {
     ws.onmessage = (event) => {
       try {
         const data = JSON.parse(event.data);
-        if (data.type === "chat_message" || data.id) {
-          if (onMessageRef.current) {
-            onMessageRef.current(data);
-          }
+        if (data.type === "chat_message" || data.message) {
+          onMessageRef.current?.(data);
         }
       } catch (err) {
-        console.error("Failed to parse chat message frame:", err);
+        console.error("Failed to parse incoming WebSocket message:", err);
       }
+    };
+
+    ws.onerror = () => {
+      setConnectionStatus("disconnected");
     };
 
     ws.onclose = () => {
       setConnectionStatus("disconnected");
     };
 
-    ws.onerror = (err) => {
-      console.error("WebSocket connection error:", err);
-      setConnectionStatus("error");
-    };
-
     return () => {
       ws.close();
+      socketRef.current = null;
     };
   }, [conversationId]);
 
-  const sendMessage = useCallback((content) => {
-    if (!content || !content.trim()) return false;
+  const sendMessage = (messageText) => {
     if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      socketRef.current.send(JSON.stringify({ message: content.trim() }));
+      socketRef.current.send(JSON.stringify({ message: messageText }));
       return true;
     }
     return false;
-  }, []);
+  };
 
   return { connectionStatus, sendMessage };
 }

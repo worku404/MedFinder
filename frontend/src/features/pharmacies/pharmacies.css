@@ -330,3 +330,519 @@
   padding: var(--space-4);
   width: 100%;
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   FULL-SCREEN MAP & FLOATING DIRECTIONS PROFILE
+   ═══════════════════════════════════════════════════════════════ */
+
+.pharmacy-profile-viewport {
+  position: relative;
+  width: 100%;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+  background: var(--color-paper);
+}
+
+.pharmacy-profile-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: calc(100vh - 64px);
+  gap: var(--space-3);
+  color: var(--color-ink-soft);
+  font-size: 0.95rem;
+}
+
+.fullscreen-map-wrapper {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.fullscreen-leaflet-map {
+  width: 100%;
+  height: 100%;
+  background: #f4f6f8;
+}
+
+/* ── Custom Map Pins ────────────────────────────────────────── */
+
+.map-beacon-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.beacon-pin {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.beacon-pin__pulse {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: rgba(37, 99, 235, 0.35);
+  animation: beaconPulse 2s infinite ease-out;
+}
+
+.beacon-pin__core {
+  width: 22px;
+  height: 22px;
+  background: #2563eb;
+  color: #ffffff;
+  border: 2px solid #ffffff;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 11px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.5);
+  z-index: 2;
+}
+
+@keyframes beaconPulse {
+  0% {
+    transform: scale(0.6);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.8);
+    opacity: 0;
+  }
+}
+
+.map-pharmacy-marker {
+  background: transparent !important;
+  border: none !important;
+}
+
+.pharmacy-pin {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pharmacy-pin__badge {
+  width: 36px;
+  height: 36px;
+  background: var(--color-primary, #0e8a82);
+  color: #ffffff;
+  border: 2.5px solid #ffffff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(14, 138, 130, 0.45);
+  z-index: 2;
+}
+
+.pharmacy-pin__arrow {
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid var(--color-primary, #0e8a82);
+  margin-top: -2px;
+}
+
+/* ── Floating Left-Hand Directions & Dossier Panel ──────────── */
+
+.floating-directions-panel {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  bottom: 16px;
+  width: 390px;
+  max-width: calc(100vw - 32px);
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-lg);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.04);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: width 240ms cubic-bezier(0.16, 1, 0.3, 1), transform 240ms ease;
+}
+
+.floating-directions-panel--collapsed {
+  width: 48px;
+  overflow: visible;
+}
+
+.floating-panel-toggle {
+  position: absolute;
+  top: 14px;
+  right: 12px;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-line);
+  background: var(--color-paper);
+  color: var(--color-ink-soft);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  z-index: 20;
+  transition: all 120ms ease;
+}
+
+.floating-directions-panel--collapsed .floating-panel-toggle {
+  right: -16px;
+  background: var(--color-surface);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border-radius: 50%;
+}
+
+.floating-panel-toggle:hover {
+  background: var(--color-surface);
+  color: var(--color-ink);
+  border-color: var(--color-primary);
+}
+
+.floating-panel-content {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow-y: auto;
+  padding: 20px 20px 24px;
+}
+
+.floating-panel-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+  padding-right: 36px;
+}
+
+.floating-back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--color-ink-soft);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.floating-back-link:hover {
+  color: var(--color-primary);
+}
+
+.pharmacy-badge-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #059669;
+  background: rgba(16, 185, 129, 0.12);
+  padding: 3px 8px;
+  border-radius: var(--radius-pill);
+}
+
+/* ── Pharmacy Dossier ───────────────────────────────────────── */
+
+.pharmacy-dossier {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.pharmacy-dossier__title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-ink);
+  margin: 0;
+}
+
+.pharmacy-dossier__license {
+  font-size: 0.8125rem;
+  color: var(--color-ink-soft);
+  margin: 0;
+}
+
+.pharmacy-dossier__license code {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  background: var(--color-paper);
+  padding: 2px 6px;
+  border-radius: var(--radius-sm);
+  color: var(--color-ink);
+}
+
+.pharmacy-dossier__address,
+.pharmacy-dossier__phone {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: var(--color-ink-soft);
+  margin: 0;
+  text-decoration: none;
+}
+
+.pharmacy-dossier__phone {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.pharmacy-dossier__phone:hover {
+  text-decoration: underline;
+}
+
+.floating-panel-divider {
+  height: 1px;
+  background: var(--color-line);
+  margin: 20px 0;
+}
+
+/* ── Directions & Routing ───────────────────────────────────── */
+
+.directions-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.directions-section__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.directions-section__title {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-soft);
+  margin: 0;
+}
+
+.directions-recenter-btn {
+  background: transparent;
+  border: none;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  cursor: pointer;
+  padding: 2px 6px;
+}
+
+.directions-transit-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  background: var(--color-paper);
+  padding: 4px;
+  border-radius: var(--radius-md);
+}
+
+.transit-tab {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 4px;
+  border-radius: var(--radius-sm);
+  border: none;
+  background: transparent;
+  color: var(--color-ink-soft);
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+
+.transit-tab svg {
+  opacity: 0.75;
+}
+
+.transit-tab:hover {
+  color: var(--color-ink);
+}
+
+.transit-tab--active {
+  background: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.transit-tab--active svg {
+  opacity: 1;
+}
+
+/* ── Origin / Destination Stack ─────────────────────────────── */
+
+.directions-points-box {
+  background: var(--color-paper);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.point-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.point-icon {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.point-icon--origin {
+  background: #2563eb;
+  color: #ffffff;
+}
+
+.point-icon--dest {
+  background: var(--color-primary, #0e8a82);
+  color: #ffffff;
+}
+
+.point-info {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.point-label {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-ink-soft);
+}
+
+.point-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.point-connector {
+  width: 2px;
+  height: 12px;
+  background: var(--color-line);
+  margin-left: 10px;
+}
+
+/* ── Route Summary ──────────────────────────────────────────── */
+
+.route-summary-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+}
+
+.route-summary-card__header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 4px;
+}
+
+.route-time-val {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-primary);
+  line-height: 1;
+}
+
+.route-dist-val {
+  font-family: var(--font-mono);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.route-summary-card__hint {
+  font-size: 0.8125rem;
+  color: var(--color-ink-soft);
+  margin: 0;
+}
+
+.route-stats-loading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  background: var(--color-paper);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+}
+
+.route-error-notice {
+  padding: 12px;
+  background: var(--color-caution-bg);
+  color: var(--color-caution);
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+}
+
+/* ── Mobile Responsiveness ──────────────────────────────────── */
+
+@media (max-width: 768px) {
+  .floating-directions-panel {
+    top: auto;
+    bottom: 12px;
+    left: 12px;
+    right: 12px;
+    width: auto;
+    max-width: none;
+    max-height: 52vh;
+    border-radius: var(--radius-lg);
+  }
+
+  .floating-directions-panel--collapsed {
+    transform: translateY(calc(100% - 44px));
+    width: auto;
+  }
+
+  .floating-panel-toggle {
+    top: 10px;
+    right: 10px;
+  }
+}
+

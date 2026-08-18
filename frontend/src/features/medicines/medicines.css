@@ -635,71 +635,348 @@
   margin: 0;
 }
 
-.medicine-detail {
+/* ── Medicine Detail Page (Clinical 2-Column Showcase) ────────── */
+
+.med-detail-shell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px clamp(16px, 4vw, 24px) 80px;
+}
+
+.med-detail-breadcrumb {
   display: flex;
-  gap: var(--space-5);
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+  color: var(--color-ink-soft);
+  margin-bottom: 28px;
   flex-wrap: wrap;
 }
 
-.medicine-detail__image {
-  width: 140px;
-  height: 140px;
-  flex: none;
+.med-breadcrumb-link {
+  color: var(--color-ink-soft);
+  text-decoration: none;
+  transition: color 120ms ease;
+}
+
+.med-breadcrumb-link:hover {
+  color: var(--color-primary);
+}
+
+.med-breadcrumb-sep {
+  color: var(--color-line);
+  user-select: none;
+}
+
+.med-breadcrumb-current {
+  color: var(--color-ink);
+  font-weight: 500;
+}
+
+.med-detail-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 32px;
+}
+
+@media (min-width: 920px) {
+  .med-detail-grid {
+    grid-template-columns: 400px 1fr;
+    gap: 40px;
+    align-items: start;
+  }
+}
+
+.med-detail-left {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.med-detail-right {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Big Showcase Image Card */
+.med-showcase-card {
+  position: relative;
+  width: 100%;
+  height: 380px;
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-line);
+  border-radius: 16px;
+  overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--color-surface);
-  border: 1px solid var(--color-line);
-  border-radius: var(--radius-md);
-  color: var(--color-ink-soft);
-  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
-.medicine-detail__image img {
+.med-showcase-img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 240ms ease;
 }
 
-.medicine-detail__body {
-  flex: 1 1 240px;
-  min-width: 0;
+.med-showcase-card:hover .med-showcase-img {
+  transform: scale(1.02);
 }
 
-.medicine-detail__category {
-  font-size: var(--text-xs);
+.med-showcase-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  background: var(--color-surface-sunk);
+  color: var(--color-ink-soft);
+}
+
+.med-badge-floating {
+  position: absolute;
+  top: 14px;
+  left: 14px;
+  z-index: 2;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 12px;
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+}
+
+/* Fact Grid Specifications */
+.med-fact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.med-fact-item {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
+
+.med-fact-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-soft);
+  margin-bottom: 4px;
+}
+
+.med-fact-val {
+  display: block;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--color-ink);
+  line-height: 1.25;
+}
+
+/* Header Group */
+.med-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.med-category-pill {
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
   color: var(--color-primary);
   text-decoration: none;
+  margin-bottom: 4px;
 }
 
-.medicine-detail__category:hover {
+.med-category-pill:hover {
   text-decoration: underline;
 }
 
-.medicine-detail__name {
+.med-title {
   font-family: var(--font-display);
-  font-size: var(--text-xl);
-  margin: var(--space-1) 0 var(--space-2);
+  font-size: clamp(1.85rem, 3.5vw, 2.5rem);
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--color-ink);
+  margin: 0;
+  line-height: 1.15;
 }
 
-.medicine-detail__meta {
-  font-size: var(--text-sm);
+.med-subtitle {
+  font-size: 1.05rem;
   color: var(--color-ink-soft);
-  margin: 0 0 var(--space-3);
+  margin: 0;
+  font-weight: 500;
 }
 
-.medicine-detail__description {
-  font-size: var(--text-sm);
-  line-height: 1.6;
-  margin-top: var(--space-4);
+/* Hero Action & Price Card */
+.med-action-card {
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-line);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.15);
 }
 
-.medicine-detail__search-link {
+.med-action-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.med-stock-indicator {
   display: inline-flex;
-  width: auto;
-  margin-top: var(--space-4);
+  align-items: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--color-fresh, #4ade80);
+}
+
+.med-stock-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+
+.med-price-badge {
+  text-align: right;
+}
+
+.med-price-prefix {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-ink-soft);
+  display: block;
+}
+
+.med-price-number {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--color-ink);
+  line-height: 1.1;
+}
+
+.med-price-currency {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--color-primary);
+}
+
+.med-action-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+@media (min-width: 600px) {
+  .med-action-buttons {
+    flex-direction: row;
+  }
+}
+
+.med-btn-main {
+  flex: 1.4;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border-radius: 10px;
+  text-decoration: none;
+}
+
+.med-btn-chat {
+  flex: 1;
+  height: 46px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.92rem;
+  font-weight: 600;
+  border-radius: 10px;
+  text-decoration: none;
+  border: 1.5px solid var(--color-line);
+  color: var(--color-ink);
+  background: var(--color-surface);
+}
+
+.med-btn-chat:hover {
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  background: var(--color-surface-alt);
+}
+
+/* Clinical Info Card */
+.med-info-card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-line);
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.med-info-heading {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--color-ink);
+  margin: 0 0 10px;
+}
+
+.med-info-text {
+  font-size: 0.92rem;
+  line-height: 1.7;
+  color: var(--color-ink-soft);
+  margin: 0;
+}
+
+/* Patient Safety Notice */
+.med-safety-card {
+  display: flex;
+  gap: 14px;
+  padding: 16px 18px;
+  background: rgba(14, 165, 233, 0.05);
+  border: 1px solid rgba(14, 165, 233, 0.2);
+  border-radius: 14px;
+}
+
+.med-safety-icon {
+  color: var(--color-primary);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.med-safety-content strong {
+  display: block;
+  font-size: 0.88rem;
+  color: var(--color-ink);
+  margin-bottom: 2px;
+}
+
+.med-safety-content p {
+  font-size: 0.82rem;
+  line-height: 1.5;
+  color: var(--color-ink-soft);
+  margin: 0;
 }
 
 /* ── Badges ─────────────────────────────────────────────────────── */
@@ -714,12 +991,13 @@
 }
 
 .med-badge--rx {
-  background: var(--color-surface-sunk);
-  color: var(--color-ink);
-  border: 1px solid var(--color-line);
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
 }
 
 .med-badge--otc {
   background: var(--color-verified-bg);
   color: var(--color-verified);
+  border: 1px solid rgba(74, 222, 128, 0.3);
 }
