@@ -1,3 +1,8 @@
+Documentation: https://drive.google.com/drive/folders/1WQmCQHGvOuKPpkaRAuWG-uAtEhD8gGwa?usp=drive_link
+Group members: SOFONIAS ADMASSU CTC-2932-26
+               WERKU WONDODSON  CTC-350-26
+               SEID JEMAL CTC-162-26
+
 # MedFinder
 
 > Digital Medicine Discovery & Real-Time Pharmacist Consultation Platform
