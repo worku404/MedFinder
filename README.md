@@ -1,5 +1,7 @@
 # MedFinder
 
+https://drive.google.com/drive/folders/1WQmCQHGvOuKPpkaRAuWG-uAtEhD8gGwa?usp=drive_link
+
 > Digital Medicine Discovery & Real-Time Pharmacist Consultation Platform
 
 MedFinder is a distributed healthcare discovery and communication platform that connects patients with licensed, verified pharmacies. The platform provides typo-tolerant pharmaceutical search, PostGIS-powered geospatial distance ranking, inventory verification timestamps, and real-time bidirectional WebSocket consultations between patients and pharmacists.
